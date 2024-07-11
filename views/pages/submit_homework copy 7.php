@@ -160,7 +160,6 @@ $controllers->submit_homework();
                                             </div>
                                         </div>
                                         <div class="code_editor">
-
                                             <div id="editor"><?php
                                             
                                             if(isset($_POST['editor_code'])){
@@ -171,7 +170,6 @@ $controllers->submit_homework();
                                             
                                             
                                             ?></div>
-                                            <label for="editor" class="mt-5 ">Powered by <a href="http://lokeshwardebportfolio.epizy.com" target="_blank" class="" >Lokeshwar Deb Protik</a></label>
                                         </div>
                                         <textarea class="form-control d-none mt-4 pt-4" name="editor_code" id="editor_code"></textarea>
                                         <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js" integrity="sha512-ExJSN+QimtEA9CcfY0lh/4EexQwd/gHJjOkHRi5Wz9+QkGJ4PC2fFQv0XaDTY64X/gBrx2LlUHfs8OFNO91obCQ==" crossorigin="anonymous"></script>
@@ -183,7 +181,6 @@ $controllers->submit_homework();
 
                                             editor.session.setUseWrapMode(false);
 
-                                     
                                             function updateLanguage() {
                                                 var language = document.getElementById("language").value;
 
@@ -343,65 +340,11 @@ $controllers->submit_homework();
 
 
                                     </div>
-
-                                    <div class="test_code_section">
-                                    <div class="mb-3 mt-4 pt-4">
-                                        <button type="submit" class="btn btn-outline-primary" name="test_code">Test code</button>
-                                    </div>
-                                    </div>
-
-                                    <!-- past homework_file and submit btn placed here -->
-                                    <!-- past homework_file and submit btn placed here -->
-
-                                    <!-- <div class="test_code_section">
-                                    <div class="mb-3 mt-4 pt-4">
-                                        <button type="submit" class="btn btn-outline-primary" name="test_code">Test code</button>
-                                    </div>
-                                    </div> -->
-
-                                    <div class="enter_input_section mb-4">
-                                        <div class="mb-3 container mt-4 pt-4">
-                                            <label for="input_data" class="mb-4 mt-4">Enter your input here (use it if you have used the dynamic user input method on you code) :</label>
-                                            <textarea name="input_data" placeholder="Enter your input here (if you have passed the input in the code)" class="form-control" id="input_data" cols="30" rows="10"><?php
-                                            
-                                            if(isset($_POST['input_data'])){
-                                                echo $_POST['input_data'];
-                                            }
-                                            
-                                            
-                                            ?></textarea>
-                                        </div>
-                                    </div>
-
-                                    <div class="show_output mt-4">
-                                    <?php
-$output = $controllers->run_code();
-if (is_array($output)) {
-    echo '<div class="output-section">';
-    echo '<p><strong>Output:</strong> ' . $output['output'] . '</p>';
-    echo '<p><strong>Status Code:</strong> ' . $output['statusCode'] . '</p>';
-    echo '<p><strong>Memory:</strong> ' . $output['memory'] . '</p>';
-    echo '<p><strong>CPU Time:</strong> ' . $output['cpuTime'] . '</p>';
-    echo '<p class="text-danger"><strong>Error:</strong> ' . $output['error'] . '</p>';
-    echo '</div>';
-} else {
-    echo '<div class="error-section mt-4 pt-4 mb-4 pb-4">';
-    echo '<p>Error: ' . $output . '</p>';
-    echo '</div>';
-}
-?>
-
-                                    </div>
-                                    <!-- <div class="mb-3 mt-4 pt-4">
-                                        <button type="submit" class="btn btn-outline-primary" name="test_code">Test code</button>
-                                    </div> -->
-
-                                    <div class="mb-3 me-4 mt-4 pt-4 pe-4">
-                                        <label for="homework_files" class="mt-4">Add homework submit files</label>
+                                    <div class="mb-3 me-4 pe-4">
                                         <?php
                                         $controllers->homework_submit_show_input(
-                                            '<input type="file" name="homework_files" class="form-control mt-4 " id="homework_files">',
-                                            '<input disabled type="file" name="homework_files" class="form-control mt-4 " id="homework_files">'
+                                            '<input type="file" name="homework_files" class="form-control mt-4" id="homework_files">',
+                                            '<input disabled type="file" name="homework_files" class="form-control mt-4" id="homework_files">'
                                         );
                                         ?>
                                     </div>
@@ -414,6 +357,89 @@ if (is_array($output)) {
                                         ?>
                                     </div>
 
+                                    <div class="test_code_section">
+                                    <div class="mb-3 mt-4 pt-4">
+                                        <button type="submit" class="btn btn-outline-primary" name="test_code">Test code</button>
+                                    </div>
+                                    </div>
+
+                                    <div class="show_output">
+                                    <?php
+$output = $controllers->run_code();
+if (is_array($output)) {
+    echo '<div class="output-section">';
+    echo '<p><strong>Output:</strong> ' . $output['output'] . '</p>';
+    echo '<p><strong>Status Code:</strong> ' . $output['statusCode'] . '</p>';
+    echo '<p><strong>Memory:</strong> ' . $output['memory'] . '</p>';
+    echo '<p><strong>CPU Time:</strong> ' . $output['cpuTime'] . '</p>';
+    echo '<p class="text-danger"><strong>Error:</strong> ' . $output['error'] . '</p>';
+    echo '</div>';
+} else {
+    echo '<div class="error-section">';
+    echo '<p>Error: ' . $output . '</p>';
+    echo '</div>';
+}
+?>
+
+                                        
+                                        <!-- <?php
+                                        // echo $output = $controllers->run_code();
+
+                                        // $out_val = json_decode($output, true);
+
+                                        // echo "the output is : " . $out_val['output'];
+
+
+
+                                            // main code section
+
+                                        
+                                    echo    $output = $controllers->run_code(); // Assuming this function returns the JSON response
+
+
+                                    if(is_string($output)){
+                                        echo "the output is an array";
+                                    }else{
+                                        echo "the output is not an array";
+                                    }
+                                    
+
+                                    // $ar = array($output);
+                                    
+                                     echo   $output_decoded = json_decode($output, true);
+
+                                    //  json_decode($output, true);
+
+                                    //  print_r($output);
+
+                                        if ($output_decoded) {
+                                            echo '<p>Output: ' . $output_decoded['output'] . htmlspecialchars($output_decoded['output']) . '</p>';
+                                            echo '<p>Error: ' . htmlspecialchars($output_decoded['error']) . '</p>';
+                                            echo '<p>Status Code: ' . htmlspecialchars($output_decoded['statusCode']) . '</p>';
+                                            echo '<p>Memory: ' . htmlspecialchars($output_decoded['memory']) . '</p>';
+                                            echo '<p>CPU Time: ' . htmlspecialchars($output_decoded['cpuTime']) . '</p>';
+                                            echo '<p>Compilation Status: ' . htmlspecialchars($output_decoded['compilationStatus']) . '</p>';
+                                        } else {
+                                            echo '<p>No output available</p>';
+                                        }
+
+                                        // foreach($out_val as $key => $value){
+                                        //   echo  $value['output'];
+                                        // }
+
+                                        
+
+                                        // echo ($out_val); //$out_val["output"];
+
+                                        // echo $output['output'];
+
+                                        // echo '<pre>' . $output . '</pre>';
+                                        ?> -->
+
+                                    </div>
+                                    <!-- <div class="mb-3 mt-4 pt-4">
+                                        <button type="submit" class="btn btn-outline-primary" name="test_code">Test code</button>
+                                    </div> -->
                                     <div class="mb-3 mt-4 pt-4">
                                         <a href="/homework" class="nav-link">
                                             <button type="button" class="btn btn-sm btn-outline-dark">Back to Homeworks</button>

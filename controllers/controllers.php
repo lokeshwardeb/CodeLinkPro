@@ -133,6 +133,7 @@ class controllers extends models
     }
 
 
+    // jai sri ganesh
 
     public function run_code()
 {
@@ -185,12 +186,87 @@ class controllers extends models
 
         curl_close($ch);
 
-        return htmlspecialchars($result);
+        // Decode JSON response
+        $resultArray = json_decode($result, true);
+
+        // Check if decoding was successful and return the appropriate values
+        if ($resultArray) {
+            $output = [
+                'output' => htmlspecialchars($resultArray['output'] ?? ''),
+                'statusCode' => htmlspecialchars($resultArray['statusCode'] ?? ''),
+                'memory' => htmlspecialchars($resultArray['memory'] ?? ''),
+                'cpuTime' => htmlspecialchars($resultArray['cpuTime'] ?? ''),
+                'error' => htmlspecialchars($resultArray['error'] ?? '')
+            ];
+
+            return $output;
+        } else {
+            return 'Failed to decode JSON response';
+        }
     }
 }
 
 
-//     // test_run
+
+    // public function run_code()
+    // {
+    //     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['test_code'])) {
+    //         $code = $_POST['editor_code'];
+    //         $language = (string) $_POST['language'];
+    //         $input_data = isset($_POST['input_data']) ? $_POST['input_data'] : '';
+
+    //         $clientId = 'bb3163d64db80aa87f149b51a3a7ec2a';
+    //         $clientSecret = '99043e289eabc79837025889a1298b61cf60324a1a0846382e5551586ec918ef';
+    //         $url = 'https://api.jdoodle.com/v1/execute';
+
+    //         $versionIndex = '0'; // Default version index
+    //         switch ($language) {
+    //             case "python3":
+    //                 $versionIndex = "3";
+    //                 break;
+    //             case "c":
+    //             case "cpp":
+    //                 $versionIndex = "5";
+    //                 break;
+    //             case "java":
+    //                 $versionIndex = "3";
+    //                 break;
+    //             case "php":
+    //                 $versionIndex = "4";
+    //                 break;
+    //         }
+
+    //         $data = [
+    //             "clientId" => $clientId,
+    //             "clientSecret" => $clientSecret,
+    //             "script" => $code,
+    //             "language" => $language,
+    //             "versionIndex" => $versionIndex,
+    //             "stdin" => $input_data
+    //         ];
+
+    //         $ch = curl_init($url);
+    //         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    //         curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    //         curl_setopt($ch, CURLOPT_POST, true);
+    //         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+    //         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // For testing purposes, disable SSL verification
+    //         $result = curl_exec($ch);
+
+    //         if (curl_errno($ch)) {
+    //             die('Error: ' . curl_error($ch));
+    //         }
+
+    //         curl_close($ch);
+
+    //         // $result;
+
+    //         return htmlspecialchars($result);
+    //     }
+    // }
+
+
+    //     // test_run
 //     public function run_code()
 // {
 //     // Check if the form was submitted
@@ -200,12 +276,12 @@ class controllers extends models
 //         $language = (string) $_POST['language'];
 //         $input_data = isset($_POST['input_data']) ? $_POST['input_data'] : '';
 
-//         // Jdoodle API credentials and endpoint
+    //         // Jdoodle API credentials and endpoint
 //         $clientId = 'bb3163d64db80aa87f149b51a3a7ec2a';
 //         $clientSecret = '99043e289eabc79837025889a1298b61cf60324a1a0846382e5551586ec918ef';
 //         $url = 'https://api.jdoodle.com/v1/execute';
 
-//         // Determine the version index based on the selected language
+    //         // Determine the version index based on the selected language
 //         $versionIndex = '0'; // Default version index
 //         switch ($language) {
 //             case "python3":
@@ -223,7 +299,7 @@ class controllers extends models
 //                 break;
 //         }
 
-//         // Prepare the data to send to Jdoodle API
+    //         // Prepare the data to send to Jdoodle API
 //         $data = [
 //             "clientId" => $clientId,
 //             "clientSecret" => $clientSecret,
@@ -233,13 +309,13 @@ class controllers extends models
 //             "stdin" => $input_data, // Placeholder for input, can be filled below
 //         ];
 
-//         // // Check if input is provided in the form submission
+    //         // // Check if input is provided in the form submission
 //         // if (isset($_POST['input_data']) && $_POST['input_data'] != '') {
 //         //   echo  $inputData = $_POST['input_data'];
 //         //     $data['stdin'] = $inputData;
 //         // }
 
-//         // Set up the request options
+    //         // Set up the request options
 //         $options = [
 //             'http' => [
 //                 'header' => "Content-Type: application/json\r\n",
@@ -248,17 +324,17 @@ class controllers extends models
 //             ],
 //         ];
 
-//         // Create a stream context for the API request
+    //         // Create a stream context for the API request
 //         $context = stream_context_create($options);
 //         // Make the API request
 //         $result = file_get_contents($url, false, $context);
 
-//         // Handle errors if the API request fails
+    //         // Handle errors if the API request fails
 //         if ($result === FALSE) {
 //             die('Error: Unable to fetch data from Jdoodle API');
 //         }
 
-//         // Return the API response as JSON
+    //         // Return the API response as JSON
 //         return $result;
 //     }
 // }

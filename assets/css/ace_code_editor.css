@@ -32,3 +32,11 @@
 .ace_scroller{
     margin-top: var(--set-editor-inner-margin-top) !important;
 }
+
+/* .ace_autocomplete{
+    padding: 25px !important;
+}
+
+.ace_editor .ace_autocomplete .ace_dark .ace-cobalt{
+    padding: 50px !important;
+} */
