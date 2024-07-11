@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Homework Submission System</title>
+</head>
+<body>
+    <h2>Upload Homework Sheet</h2>
+    <form action="upload_homework.php" method="post" enctype="multipart/form-data">
+        <input type="text" name="title" placeholder="Homework Title" required><br>
+        <textarea name="description" placeholder="Homework Description" required></textarea><br>
+        <input type="file" name="homework_file" accept=".pdf" required><br>
+        <input type="submit" value="Upload Homework Sheet">
+    </form>
+
+    <h2>Upload Files for Homework Problems</h2>
+    <form action="upload_problem_files.php" method="post" enctype="multipart/form-data">
+        <select name="homework_id" required>
+            <?php
+            $conn = new mysqli("localhost", "root", "", "homework_system");
+            $sql = "SELECT id, title FROM homeworks";
+            $result = $conn->query($sql);
+
+            if ($result->num_rows > 0) {
+                while($row = $result->fetch_assoc()) {
+                    echo "<option value='" . $row["id"] . "'>" . $row["title"] . "</option>";
+                }
+            } else {
+                echo "<option>No homeworks found</option>";
+            }
+            $conn->close();
+            ?>
+        </select><br>
+        <input type="number" name="problem_number" placeholder="Problem Number" required><br>
+        <input type="file" name="problem_files[]" multiple required><br>
+        <input type="submit" value="Upload Problem Files">
+    </form>
+</body>
+</html>
