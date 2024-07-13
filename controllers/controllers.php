@@ -136,75 +136,75 @@ class controllers extends models
     // jai sri ganesh
 
     public function run_code()
-{
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['test_code'])) {
-        $code = $_POST['editor_code'];
-        $language = (string) $_POST['language'];
-        $input_data = isset($_POST['input_data']) ? $_POST['input_data'] : '';
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['test_code'])) {
+            $code = $_POST['editor_code'];
+            $language = (string) $_POST['language'];
+            $input_data = isset($_POST['input_data']) ? $_POST['input_data'] : '';
 
-        $clientId = 'bb3163d64db80aa87f149b51a3a7ec2a';
-        $clientSecret = '99043e289eabc79837025889a1298b61cf60324a1a0846382e5551586ec918ef';
-        $url = 'https://api.jdoodle.com/v1/execute';
+            $clientId = 'bb3163d64db80aa87f149b51a3a7ec2a';
+            $clientSecret = '99043e289eabc79837025889a1298b61cf60324a1a0846382e5551586ec918ef';
+            $url = 'https://api.jdoodle.com/v1/execute';
 
-        $versionIndex = '0'; // Default version index
-        switch ($language) {
-            case "python3":
-                $versionIndex = "3";
-                break;
-            case "c":
-            case "cpp":
-                $versionIndex = "5";
-                break;
-            case "java":
-                $versionIndex = "3";
-                break;
-            case "php":
-                $versionIndex = "4";
-                break;
-        }
+            $versionIndex = '0'; // Default version index
+            switch ($language) {
+                case "python3":
+                    $versionIndex = "3";
+                    break;
+                case "c":
+                case "cpp":
+                    $versionIndex = "5";
+                    break;
+                case "java":
+                    $versionIndex = "3";
+                    break;
+                case "php":
+                    $versionIndex = "4";
+                    break;
+            }
 
-        $data = [
-            "clientId" => $clientId,
-            "clientSecret" => $clientSecret,
-            "script" => $code,
-            "language" => $language,
-            "versionIndex" => $versionIndex,
-            "stdin" => $input_data
-        ];
-
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // For testing purposes, disable SSL verification
-        $result = curl_exec($ch);
-
-        if (curl_errno($ch)) {
-            die('Error: ' . curl_error($ch));
-        }
-
-        curl_close($ch);
-
-        // Decode JSON response
-        $resultArray = json_decode($result, true);
-
-        // Check if decoding was successful and return the appropriate values
-        if ($resultArray) {
-            $output = [
-                'output' => htmlspecialchars($resultArray['output'] ?? ''),
-                'statusCode' => htmlspecialchars($resultArray['statusCode'] ?? ''),
-                'memory' => htmlspecialchars($resultArray['memory'] ?? ''),
-                'cpuTime' => htmlspecialchars($resultArray['cpuTime'] ?? ''),
-                'error' => htmlspecialchars($resultArray['error'] ?? '')
+            $data = [
+                "clientId" => $clientId,
+                "clientSecret" => $clientSecret,
+                "script" => $code,
+                "language" => $language,
+                "versionIndex" => $versionIndex,
+                "stdin" => $input_data
             ];
 
-            return $output;
-        } else {
-            return 'Failed to decode JSON response';
+            $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // For testing purposes, disable SSL verification
+            $result = curl_exec($ch);
+
+            if (curl_errno($ch)) {
+                die('Error: ' . curl_error($ch));
+            }
+
+            curl_close($ch);
+
+            // Decode JSON response
+            $resultArray = json_decode($result, true);
+
+            // Check if decoding was successful and return the appropriate values
+            if ($resultArray) {
+                $output = [
+                    'output' => htmlspecialchars($resultArray['output'] ?? ''),
+                    'statusCode' => htmlspecialchars($resultArray['statusCode'] ?? ''),
+                    'memory' => htmlspecialchars($resultArray['memory'] ?? ''),
+                    'cpuTime' => htmlspecialchars($resultArray['cpuTime'] ?? ''),
+                    'error' => htmlspecialchars($resultArray['error'] ?? '')
+                ];
+
+                return $output;
+            } else {
+                return 'Failed to decode JSON response';
+            }
         }
     }
-}
 
 
 
@@ -412,12 +412,409 @@ class controllers extends models
 
     // }
 
+    // jai sri ganesh
+
     public function submit_homework()
     {
         if (isset($_POST['homework_submit'])) {
-            echo $editor_code = $_POST['editor_code'];
+            $editor_code = $this->pure_data($_POST['editor_code']);
+            $language = $_POST['language'];
+            $homework_id = $this->pure_data($_POST['homework_id']);
+            $homework_problem_id = $this->pure_data($_POST['homework_problem_id']);
+            $submitted_user_id = $_SESSION['user_id'];
+            $homework_files = $_FILES['homework_files'];
+            $homework_files_upload_dir = __DIR__ . '/../assets/uploads/homework_submits/';
+            // $homework_files_upload_dir =  '/assets/uploads/homework_submits/';
+            $get_username = $_SESSION['username'];
+            $pure_username = str_replace(" ", "_", $get_username);
+            $cus_upload_dir = $homework_files_upload_dir . $pure_username . '/homework_id_' . $homework_id . '/problem_id_' . $homework_problem_id;
+
+            // check if the homework id and homework problem is not blank
+
+            if($homework_id == ''){
+                echo '
+                <script>
+                danger_alert("Error !!", "You have to select a homework !! Homework cannot be blank !!")
+                </script>
+                ';
+                return;
+            }
+
+            if($homework_problem_id == ''){
+                echo '
+                <script>
+                danger_alert("Error !!", "You have to select a homework problem !! Homework problem cannot be blank !!");
+                </script>
+                ';
+                return;
+            }
+
+            // // Create the directory if it doesn't exist
+            // if (!is_dir($cus_upload_dir)) {
+            //     mkdir($cus_upload_dir, 0777, true);
+            // }
+
+            $check_homework_submission = $this->get_data_where("homework_submission", "`homework_id` = '$homework_id' AND `homework_problem_id` = '$homework_problem_id'");
+
+            if ($check_homework_submission) {
+                if ($check_homework_submission->num_rows == 1) {
+                    echo '
+                    <script>
+                    danger_alert("Error !!", "Your homework is already submitted !! You cannot resubmit your submitted homework !!");
+                    </script>
+                    ';
+
+                    return;
+
+                    // return;
+                    // exit;
+                    // exit("error");
+                }
+            }
+
+            //  check if the data is already exists on the database
+
+            $result_check_homework_submission = $this->get_data_where("homework_submission", "`homework_id` = '$homework_id' AND `homework_problem_id` = '$homework_problem_id' AND `submitted_user_id` = '$submitted_user_id'");
+
+            if($result_check_homework_submission){
+                if($result_check_homework_submission->num_rows > 0){
+                    // that means the data and the homework submission already exists on the db
+                    echo '
+                    <script>
+                    danger_alert("Error !!", "Your homework is already submitted and exists on records !! You cannot resubmit a homework which has been already submitted !!")
+                    </script>
+                    ';
+                    return;
+                }
+            }
+
+            
+            
+
+            // Insert code submission
+            $result_insert_code = $this->insert("homework_submission", "`homework_id`, `homework_problem_id`, `submitted_user_id`, `homework_code`", "'$homework_id', '$homework_problem_id', '$submitted_user_id', '$editor_code'");
+            if (!$result_insert_code) {
+                echo '<script>danger_alert("Error !!", "The homework info cannot be submitted perfectly !! Please contact the developer as soon as possible !!");</script>';
+                return;
+            }
+
+            // Get the auto-increment ID for the homework submission
+            $result_check_result_get_submission_id = $this->get_next_auto_increment_id_value("homework_submission");
+            $row = $result_check_result_get_submission_id->fetch_assoc();
+            $result_get_submission_id = $row['AUTO_INCREMENT'];
+
+            // echo '<pre>';
+
+            // print_r($_FILES['homework_files']);
+
+            // echo '</pre>';
+
+            // if(isset($_FILES['homework_files']) && $_FILES['homework_files'] != ''){
+            //     echo 'file set';
+            // }
+
+            // foreach ($homework_files['name'] as $key => $value){
+            //     if($homework_files['name'][$key] == ''){
+            //         echo 'homework blank';
+            //     }
+            // }
+
+            // die();
+
+            // Process each file
+            foreach ($homework_files['name'] as $key => $value) {
+                // $homework_file_name = $homework_files['name'][$key];
+                $check_name = $homework_files['name'][$key];
+                $problem_no_count = (string) $key + 1;
+                $homework_file_name = 'problem_no_' . $problem_no_count;
+                $pure_homework_file_name = str_replace(" ", "_", $homework_file_name);
+                $homework_tmp_name = $homework_files['tmp_name'][$key];
+                $homework_file_ext = pathinfo($check_name, PATHINFO_EXTENSION);
+                // $final_upload_dir = $cus_upload_dir . '/' . $key . '_' . $pure_homework_file_name;
+                $final_upload_dir = $cus_upload_dir . '/' . $key . '_' . $homework_file_name . '.' . $homework_file_ext;
+                // die();
+
+
+                if($check_name == ''){
+                    // that means the check name is blank and the file is not selected
+                    echo '
+                    <script>
+                    success_alert("Success !!", "The homework has been submitted successfully without addtional files !!");
+                    </script>
+                    ';
+                }else{
+                    // that means the check name is not blank and it should create the directories and upload the file uploading process and continue the homework submitting process
+                    
+                    // Create the directory if it doesn't exist
+            if (!is_dir($cus_upload_dir)) {
+                mkdir($cus_upload_dir, 0777, true);
+            }
+                    
+                if ($homework_file_ext == 'python' || $homework_file_ext == 'c' || $homework_file_ext == 'cpp' || $homework_file_ext == 'java' || $homework_file_ext == 'php' || $homework_file_ext == 'jpg' || $homework_file_ext == 'jpeg' || $homework_file_ext == 'png') {
+                    // that means the file type are supported and this is exist on the list
+
+                    // Move the uploaded file
+                    if (move_uploaded_file($homework_tmp_name, $final_upload_dir)) {
+                        // Insert file info into the database
+                        $result_insert_homework_files = $this->insert("homework_submission_files", "`homework_submission_id`, `homework_file_name`, `homework_id`", "'$result_get_submission_id', '$pure_homework_file_name', '$homework_id'");
+                        if (!$result_insert_homework_files) {
+                            echo '<script>danger_alert("Error !!", "Failed to record file submission in the database !!");</script>';
+                            return;
+                        }
+                        echo '<script>success_alert("Success !!", "Your homework has been submitted successfully !!");</script>';
+                    }else {
+                        echo '<script>danger_alert("Error !!", "There was an error while submitting your homework !!");</script>';
+                        // return;
+                    }
+                } else {
+                    // that means the file and the file extension is not supported 
+                    echo '
+    
+                    <script>
+                    danger_alert("File type are not supported !!", "Please upload python, c, cpp, java, php, jpg, jpeg, png type files !! Other files are not supported !!"); 
+                    </script>
+    
+    
+                 ';
+                    // return;
+                }
+
+                }
+
+            }
+
+
+
+            // // Process each file
+            // foreach ($homework_files['name'] as $key => $value) {
+            //     // $homework_file_name = $homework_files['name'][$key];
+            //     $check_name = $homework_files['name'][$key];
+            //     $problem_no_count = (string) $key + 1;
+            //     $homework_file_name = 'problem_no_' . $problem_no_count;
+            //     $pure_homework_file_name = str_replace(" ", "_", $homework_file_name);
+            //     $homework_tmp_name = $homework_files['tmp_name'][$key];
+            //     $homework_file_ext = pathinfo($check_name, PATHINFO_EXTENSION);
+            //     // $final_upload_dir = $cus_upload_dir . '/' . $key . '_' . $pure_homework_file_name;
+            //     $final_upload_dir = $cus_upload_dir . '/' . $key . '_' . $homework_file_name . '.' . $homework_file_ext;
+            //     // die();
+
+
+
+            //     if($homework_file_ext == 'python' || $homework_file_ext == 'c' || $homework_file_ext == 'cpp' || $homework_file_ext == 'java' || $homework_file_ext == 'php' || $homework_file_ext == 'jpg' || $homework_file_ext == 'jpeg' || $homework_file_ext == 'png'){
+            //         // that means the file type are supported and this is exist on the list
+
+            //         // Move the uploaded file
+            //     if (move_uploaded_file($homework_tmp_name, $final_upload_dir)) {
+            //         // Insert file info into the database
+            //         $result_insert_homework_files = $this->insert("homework_submission_files", "`homework_submission_id`, `homework_file_name`, `homework_id`", "'$result_get_submission_id', '$pure_homework_file_name', '$homework_id'");
+            //         if (!$result_insert_homework_files) {
+            //             echo '<script>danger_alert("Error !!", "Failed to record file submission in the database !!");</script>';
+            //             return;
+            //         }
+            //         echo '<script>success_alert("Success !!", "Your homework has been submitted successfully !!");</script>';
+            //     }elseif($homework_file_name !=''){
+            //         echo '
+            //         <script>
+            //         danger_alert("Error !", "file is empty");
+            //         </script>
+            //         ';
+            //     } else {
+            //         echo '<script>danger_alert("Error !!", "There was an error while submitting your homework !!");</script>';
+            //     }
+            //     }else{
+            //         // that means the file and the file extension is not supported 
+            //         echo '
+
+            //         <script>
+            //         danger_alert("File type are not supported !!", "Please upload python, c, cpp, java, php, jpg, jpeg, png type files !! Other files are not supported !!"); 
+            //         </script>
+
+
+            //         ';
+            //     }
+
+
+            // }
+
+            // Validate language selection
+            if (empty($language)) {
+                echo '<script>danger_alert("Error !!", "You have to choose a language and write your code to submit the homework !!");</script>';
+            }
         }
     }
+
+
+    // public function submit_homework()
+    // {
+    //     if (isset($_POST['homework_submit'])) {
+    //          $editor_code = $this->pure_data($_POST['editor_code']);
+
+    //          $language = $_POST['language'];
+    //          $homework_id = $this->pure_data($_POST['homework_id']);
+    //          $homework_problem_id = $this->pure_data($_POST['homework_problem_id']);
+    //          $submitted_user_id = $_SESSION['user_id'];
+
+    //          $homework_files = $_FILES['homework_files'];
+    //         //  $homework_files_tmp_name = 
+
+    //         // $homework_files_upload_dir = __DIR__ . '/assets/uploads/homework_submits/';
+    //         $homework_files_upload_dir =  '/assets/uploads/homework_submits/';
+
+
+
+    //         $get_username = $_SESSION['username'];
+
+    //         $pure_username = str_replace(" ", "_", $get_username);
+
+    //         $cus_upload_dir = $homework_files_upload_dir . $pure_username . '/homework_id_' . $homework_id . '/problem_id_' . $homework_problem_id;
+
+
+
+    //         $result_insert_code = $this->insert("homework_submission", "`homework_id`, `homework_problem_id`, `submitted_user_id`, `homework_code`", "'$homework_id', '$homework_problem_id', '$submitted_user_id', '$editor_code'");
+
+    //         if(!$result_insert_code){
+    //             echo '
+
+    //             <script>
+    //             danger_alert("Error !!", "The homework info cannot be submitted perfectly !! Please contact to the developer as soon as possible !!");
+    //             </script>
+
+
+    //             ';
+    //         }
+
+    //         // homework_submission_id
+    //         // echo "<pre>";
+    //         // print_r($homework_files);
+    //         // echo "</pre>";
+
+    //         // die();
+    //         foreach ($homework_files['name'] as $key => $value) {
+
+    //              $result_check_result_get_submission_id = $this->get_next_auto_increment_id_value("homework_submission");
+
+    //              while($row = $result_check_result_get_submission_id->fetch_assoc()){
+    //                 $result_get_submission_id = $row['AUTO_INCREMENT'];
+    //              }
+
+
+    //             // $homework_submission_id = $homework_problem_id;
+
+    //             $homework_file_name = $homework_files['name'][$key];
+    //             $pure_homework_file_name = str_replace(" ", "_", $homework_file_name);
+    //           $homework_tmp_name = $homework_files['tmp_name'][$key];
+
+    //             $final_upload_dir = $cus_upload_dir . '/' . $key . $pure_homework_file_name;
+
+
+
+
+    //             // die();
+
+    //             $result_insert_homework_files = $this->insert("homework_submission_files", "`homework_submission_id`, `homework_file_name`", "'$result_get_submission_id', '$pure_homework_file_name'");
+
+
+
+    //             if(move_uploaded_file($homework_tmp_name, $final_upload_dir)){
+    //                 echo '
+
+    //                 <script>
+    //                 success_alert("Success !!", "Your homework has been submitted successfully !!");
+    //                 </script>
+
+
+    //                 ';
+    //             }else{
+    //                 echo '
+
+    //                 <script>
+    //                 danger_alert("Error !!", "There was something error while submiting your homework !!");
+    //                 </script>
+
+
+    //                 ';
+    //             }
+
+    //             if($result_insert_homework_files){
+    //                 // if(move_uploaded_file($homework_files['tmp_name'][$key], $final_upload_dir)){
+    //                 //     echo '
+
+    //                 //     <script>
+    //                 //     success_alert("Success !!", "Your homework has been submitted successfully !!");
+    //                 //     </script>
+
+
+    //                 //     ';
+    //                 // }else{
+    //                 //     echo '
+
+    //                 //     <script>
+    //                 //     danger_alert("Error !!", "There was something error while submiting your homework !!");
+    //                 //     </script>
+
+
+    //                 //     ';
+    //                 // }
+    //             }
+
+
+
+
+    //             // echo $homework_files['tmp_name'];
+
+    //             // echo $homework_files['name'][$key];
+    //             // echo $homework_files['tmp_name'][$key];
+
+    //             // echo $value[$key]['name'][$key];
+
+
+    //         // // homework_submission_id
+    //         // echo "<pre>";
+    //         // print_r($homework_files['tmp_name'][0]);
+    //         // echo "</pre>";
+
+    //         }
+
+
+
+    //         if(isset($_POST['language']) && $_POST['language'] != ''){
+    //             // echo "language is set . language is : " . $_POST['language'];
+
+
+
+
+
+
+
+    //             // $result_homework_code_insert = $this->insert("homework_submission", "`homework_code`", "'$editor_code'");
+
+    //             // if($result_homework_code_insert){
+    //             //     echo '
+
+    //             //     <script>
+    //             //     success_alert("Success !!", "Your code has been inserted successfully !!");
+    //             //     </script>
+
+    //             //     ';
+    //             // }
+
+    //             // echo 'the code is : <textarea>'. htmlspecialchars($editor_code) .'</textarea>';
+
+    //         }else{
+    //             echo "language is not set";
+    //             echo '
+
+    //             <script>
+
+    //             danger_alert("Error !!", "You have to choose a language and write your code to submit the homework !!");
+
+    //             </script>
+
+    //             ';
+
+    //         }
+    //     }
+    // }
 
     // the testing
 

@@ -23,6 +23,10 @@ class database {
 
     }
 
+    public function get_d_info_new(){
+        return $this->db_name;
+    }
+
 }
 
 // new database;

@@ -12,6 +12,22 @@ class models extends database{
       return $result;
    }
 
+     public function get_next_auto_increment_id_value($table_name){
+      // $sql = "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'code_link_pro' AND TABLE_NAME = 'homework_submission_files';";
+
+      // $database_name = $this->db_name;
+
+      $database_name = $this->get_d_info_new();
+
+
+      $sql = "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = '$database_name' AND TABLE_NAME = '$table_name';";
+
+      $result = $this->connect()->query($sql);
+
+      return $result;
+
+     }
+
      public function insert($table_name, $table_rows, $table_rows_values){
 
         $sql = "INSERT INTO `$table_name`($table_rows) VALUES ($table_rows_values)";

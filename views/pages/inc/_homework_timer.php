@@ -30,6 +30,33 @@
                                         // that means the time is expired 
                                         $result_update_expired_datetime = $controllers->update_where("homeworks", "`homework_status` = 'time_expired'", "`homework_id` = '$homework_id'");
 
+                                        // $result_update_problem_expired_status = $controllers->update_where("homework_problems", "`homework_problem_status` = 'time_expired'", "`homework_id` = '$homework_id'");
+
+
+                                        $update_hw_problem_status = $controllers->make_query("UPDATE `homework_problems` SET `homework_problem_status`='time_expired' WHERE `homework_id` = '$homework_id';");
+
+                                        if($update_hw_problem_status){
+                                            echo '
+                                            
+                                            <script>
+                                            success_alert("Success", "The problem status has been updated")
+                                            </script>
+                                            
+                                            
+                                            ';
+                                        }else{
+                                            echo '
+                                            
+                                            <script>
+                                            danger_alert("Error", "The problem status has not been updated")
+                                            </script>
+                                            
+                                            
+                                            ';
+                                        }
+
+                                        
+
                                     }
                                 }
                             }

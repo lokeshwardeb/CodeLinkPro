@@ -18,7 +18,17 @@
             if (timeLeft <= 0) {
                 clearInterval(countdown);
                 timerElement.innerHTML = 'Time\'s up!';
-                window.location.reload();
+                if(localStorage.getItem("time_up_reload_status") || localStorage.getItem("time_up_reload_status") == "reload"){
+                    // that means the software needs to be reload as it is set on localstorage
+                    window.location.reload();
+                    localStorage.removeItem("time_up_reload_status");
+                    
+                }else{
+                    // that means the software was not reloaded after time up and so that it sets the localstorage
+                    localStorage.setItem("time_up_reload_status", "reload");
+
+                }
+
             } else {
                 timerElement.innerHTML = formatTime(timeLeft);
                 timeLeft--;
