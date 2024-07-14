@@ -429,6 +429,9 @@ class controllers extends models
             $pure_username = str_replace(" ", "_", $get_username);
             $cus_upload_dir = $homework_files_upload_dir . $pure_username . '/homework_id_' . $homework_id . '/problem_id_' . $homework_problem_id;
 
+            // get submitted current user id
+            // $submitted
+
             // check if the homework id and homework problem is not blank
 
             if ($homework_id == '') {
@@ -454,10 +457,10 @@ class controllers extends models
             //     mkdir($cus_upload_dir, 0777, true);
             // }
 
-            $check_homework_submission = $this->get_data_where("homework_submission", "`homework_id` = '$homework_id' AND `homework_problem_id` = '$homework_problem_id'");
+            $check_homework_submission = $this->get_data_where("homework_submission", "`homework_id` = '$homework_id' AND `homework_problem_id` = '$homework_problem_id' AND `submitted_user_id` = '$submitted_user_id'");
 
             if ($check_homework_submission) {
-                if ($check_homework_submission->num_rows == 1) {
+                if ($check_homework_submission->num_rows > 0) {
                     echo '
                     <script>
                     danger_alert("Error !!", "Your homework is already submitted !! You cannot resubmit your submitted homework !!");
@@ -1381,6 +1384,12 @@ class controllers extends models
 
                         }
                     }
+                }else{
+                    echo '
+                    <script>
+                    danger_alert("User not found !! ", "The user with your submitted credentials was not found !! Please create a account to login !!");
+                    </script>
+                    ';
                 }
             }
 
