@@ -25,15 +25,15 @@ $controllers->submit_homework();
             <div class="col-md-8 col-sm-12">
                 <div class="section_main_content mt-4">
                     <div class="container m-4 p-4">
-                        <div class="greetings_section mb-4">
+                        <!-- <div class="greetings_section mb-4">
                             Good Morning, Protik !!
-                        </div>
-                        <div class="submit_home_work_section mt-4">
+                        </div> -->
+                        <div class="submit_home_work_section pb-4 mt-4">
                             <div class="container">
-                                <div class="section_title text-center fs-4 mb-4">
+                                <div class="section_title text-center pb-4 fs-4 mb-4">
                                     Submit your homework
                                 </div>
-                                <div class="section_check_title text-danger text-center fs-6 mb-4">
+                                <div class="section_check_title mt-4  text-danger text-center fs-6 mb-4">
                                     <?php
                                     $result_check_homework_status = $controllers->get_data_where("homeworks", "`homework_status` = 'running'");
                                     $result_problem_homework_status = $controllers->get_data_where("homework_problems", "`homework_problem_status` = 'running'");

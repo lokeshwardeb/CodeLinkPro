@@ -19,6 +19,7 @@ require __DIR__ . "/inc/_header.php";
 
 $controllers->add_new_homework();
 // add_new_homework
+$controllers->check_admin_access();
 
 
 

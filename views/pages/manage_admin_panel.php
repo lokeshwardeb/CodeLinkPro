@@ -12,7 +12,7 @@ $active_name = "Submit Homework";
 require __DIR__ . "/inc/_header.php";
 
 
-
+$controllers->check_admin_access();
 
 
 
@@ -72,6 +72,26 @@ require __DIR__ . "/inc/_header.php";
                             <div class="col-md-6">
                                 <a href="">
                                     <button class="btn dash_navi_btn manage_admin_panel_btn">Manage Written tutorials</button>
+                                </a>
+                            </div>
+                            <div class="col-md-6">
+                                <a href="/manage_submitted_homeworks">
+                                    <button class="btn dash_navi_btn manage_admin_panel_btn">Manage submitted homeworks</button>
+                                </a>
+                            </div>
+                            <div class="col-md-6">
+                                <a href="/manage_new_submitted_homeworks">
+                                    <button class="btn dash_navi_btn manage_admin_panel_btn">Manage new submitted homeworks</button>
+                                </a>
+                            </div>
+                            <div class="col-md-6">
+                                <a href="/manage_new_submitted_homeworks">
+                                    <button class="btn dash_navi_btn manage_admin_panel_btn">Change a user role</button>
+                                </a>
+                            </div>
+                            <div class="col-md-6">
+                                <a href="/manage_users">
+                                    <button class="btn dash_navi_btn manage_admin_panel_btn">Manage users </button>
                                 </a>
                             </div>
                         </div>

@@ -3,17 +3,14 @@
 
 include __DIR__ . "/inc/_sidebar_active_class.php";
 
-$manage_admin_panel_class = "sidebar_active_btn";
+$homeworks_active_class = "sidebar_active_btn";
 
-$active_name = "Submit Homework";
+$active_name = "New Homework";
 
 
 
 require __DIR__ . "/inc/_header.php";
 // require __DIR__ . "/../../models/models.php";
-$controllers->check_block_user();
-$controllers->check_admin_access();
-
 
 
 $models = new models;
@@ -221,9 +218,9 @@ for ($page = 1; $page <= $total_pages; $page++) {
                                                 <th scope="row">' . $manage_homework_sl_no . '</th>
                                                 <td>' . $row['homework_title'] . '</td>
                                                 <td>' . $row['homework_status'] . '</td>
-                                                <td>' . $row['homework_submission_datetime'] . '</td>
+                                                <td>' . date("d M Y h:i:s a", strtotime($row['homework_submission_datetime'])) . '</td>
                                                 <td>
-                                                <a href="/homework_details?homework_id=' . $row['homework_id'] . '">
+                                                <a href="/view_homework?homework_id=' . $row['homework_id'] . '">
                                                 <button class = "btn btn-sm btn-outline-dark">Homework Details</button>
                                                 </a>
                                                 </td>

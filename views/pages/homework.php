@@ -11,6 +11,7 @@ $active_name = "Homework";
 
 require __DIR__ . "/inc/_header.php";
 
+$controllers->check_block_user();
 
 
 
@@ -48,9 +49,13 @@ require __DIR__ . "/inc/_header.php";
             <div class="col-md-8 col-sm-12">
                 <div class="section_main_content mt-4">
                   <div class="container m-4 p-4">
-                  <div class="greetings_section mb-4">
-                        Good Morning, Protik !!
-                    </div>
+                  <div class="greetings_main_section">
+                            <?php
+
+                            include_once __DIR__ . '/inc/_greetings_section.php';
+
+                            ?>
+                        </div>
 
                     <div class="dashboard_navigation mt-4">
                         <div class="row">
@@ -60,7 +65,7 @@ require __DIR__ . "/inc/_header.php";
                                 </a>
                             </div>
                             <div class="col-md-6">
-                                <a href="">
+                                <a href="/new_homework">
                                     <button style="font-size: 13px" class="btn dash_navi_btn manage_admin_panel_btn">New Running Homeworks</button>
                                 </a>
                             </div>

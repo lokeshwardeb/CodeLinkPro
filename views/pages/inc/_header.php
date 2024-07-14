@@ -9,6 +9,9 @@ require_once __DIR__ . '/../../../controllers/controllers.php';
 $controllers = new controllers;
 
 $controllers->check_login();
+// $controllers->check_block_user();
+
+date_default_timezone_set("Asia/Dhaka");
 
 
 ?>
@@ -51,3 +54,6 @@ $controllers->check_login();
 </head>
 
 <body>
+    <?php
+// $controllers->check_block_user();
+    

@@ -431,7 +431,7 @@ class controllers extends models
 
             // check if the homework id and homework problem is not blank
 
-            if($homework_id == ''){
+            if ($homework_id == '') {
                 echo '
                 <script>
                 danger_alert("Error !!", "You have to select a homework !! Homework cannot be blank !!")
@@ -440,7 +440,7 @@ class controllers extends models
                 return;
             }
 
-            if($homework_problem_id == ''){
+            if ($homework_problem_id == '') {
                 echo '
                 <script>
                 danger_alert("Error !!", "You have to select a homework problem !! Homework problem cannot be blank !!");
@@ -476,8 +476,8 @@ class controllers extends models
 
             $result_check_homework_submission = $this->get_data_where("homework_submission", "`homework_id` = '$homework_id' AND `homework_problem_id` = '$homework_problem_id' AND `submitted_user_id` = '$submitted_user_id'");
 
-            if($result_check_homework_submission){
-                if($result_check_homework_submission->num_rows > 0){
+            if ($result_check_homework_submission) {
+                if ($result_check_homework_submission->num_rows > 0) {
                     // that means the data and the homework submission already exists on the db
                     echo '
                     <script>
@@ -488,11 +488,11 @@ class controllers extends models
                 }
             }
 
-            
-            
+
+
 
             // Insert code submission
-            $result_insert_code = $this->insert("homework_submission", "`homework_id`, `homework_problem_id`, `submitted_user_id`, `homework_code`", "'$homework_id', '$homework_problem_id', '$submitted_user_id', '$editor_code'");
+            $result_insert_code = $this->insert("homework_submission", "`homework_id`, `homework_problem_id`, `submitted_user_id`, `homework_code`, `code_language`", "'$homework_id', '$homework_problem_id', '$submitted_user_id', '$editor_code', '$language'");
             if (!$result_insert_code) {
                 echo '<script>danger_alert("Error !!", "The homework info cannot be submitted perfectly !! Please contact the developer as soon as possible !!");</script>';
                 return;
@@ -535,40 +535,40 @@ class controllers extends models
                 // die();
 
 
-                if($check_name == ''){
+                if ($check_name == '') {
                     // that means the check name is blank and the file is not selected
                     echo '
                     <script>
                     success_alert("Success !!", "The homework has been submitted successfully without addtional files !!");
                     </script>
                     ';
-                }else{
-                    // that means the check name is not blank and it should create the directories and upload the file uploading process and continue the homework submitting process
-                    
-                    // Create the directory if it doesn't exist
-            if (!is_dir($cus_upload_dir)) {
-                mkdir($cus_upload_dir, 0777, true);
-            }
-                    
-                if ($homework_file_ext == 'python' || $homework_file_ext == 'c' || $homework_file_ext == 'cpp' || $homework_file_ext == 'java' || $homework_file_ext == 'php' || $homework_file_ext == 'jpg' || $homework_file_ext == 'jpeg' || $homework_file_ext == 'png') {
-                    // that means the file type are supported and this is exist on the list
-
-                    // Move the uploaded file
-                    if (move_uploaded_file($homework_tmp_name, $final_upload_dir)) {
-                        // Insert file info into the database
-                        $result_insert_homework_files = $this->insert("homework_submission_files", "`homework_submission_id`, `homework_file_name`, `homework_id`", "'$result_get_submission_id', '$pure_homework_file_name', '$homework_id'");
-                        if (!$result_insert_homework_files) {
-                            echo '<script>danger_alert("Error !!", "Failed to record file submission in the database !!");</script>';
-                            return;
-                        }
-                        echo '<script>success_alert("Success !!", "Your homework has been submitted successfully !!");</script>';
-                    }else {
-                        echo '<script>danger_alert("Error !!", "There was an error while submitting your homework !!");</script>';
-                        // return;
-                    }
                 } else {
-                    // that means the file and the file extension is not supported 
-                    echo '
+                    // that means the check name is not blank and it should create the directories and upload the file uploading process and continue the homework submitting process
+
+                    // Create the directory if it doesn't exist
+                    if (!is_dir($cus_upload_dir)) {
+                        mkdir($cus_upload_dir, 0777, true);
+                    }
+
+                    if ($homework_file_ext == 'py' || $homework_file_ext == 'c' || $homework_file_ext == 'cpp' || $homework_file_ext == 'java' || $homework_file_ext == 'php' || $homework_file_ext == 'jpg' || $homework_file_ext == 'jpeg' || $homework_file_ext == 'png') {
+                        // that means the file type are supported and this is exist on the list
+
+                        // Move the uploaded file
+                        if (move_uploaded_file($homework_tmp_name, $final_upload_dir)) {
+                            // Insert file info into the database
+                            $result_insert_homework_files = $this->insert("homework_submission_files", "`homework_submission_id`, `homework_file_name`, `homework_id`", "'$result_get_submission_id', '$pure_homework_file_name', '$homework_id'");
+                            if (!$result_insert_homework_files) {
+                                echo '<script>danger_alert("Error !!", "Failed to record file submission in the database !!");</script>';
+                                return;
+                            }
+                            echo '<script>success_alert("Success !!", "Your homework has been submitted successfully !!");</script>';
+                        } else {
+                            echo '<script>danger_alert("Error !!", "There was an error while submitting your homework !!");</script>';
+                            // return;
+                        }
+                    } else {
+                        // that means the file and the file extension is not supported 
+                        echo '
     
                     <script>
                     danger_alert("File type are not supported !!", "Please upload python, c, cpp, java, php, jpg, jpeg, png type files !! Other files are not supported !!"); 
@@ -576,8 +576,8 @@ class controllers extends models
     
     
                  ';
-                    // return;
-                }
+                        // return;
+                    }
 
                 }
 
@@ -635,6 +635,192 @@ class controllers extends models
 
 
             // }
+
+            // Validate language selection
+            if (empty($language)) {
+                echo '<script>danger_alert("Error !!", "You have to choose a language and write your code to submit the homework !!");</script>';
+            }
+        }
+    }
+
+    public function change_a_user_role(){
+        if(isset($_POST['change_user_role_btn'])){
+            $user_id = $this->pure_data($_POST['user_id']);
+            $change_user_role = $this->pure_data($_POST['change_user_role']);
+
+            $result_change_user_role = $this->get_data_where("users", "`user_id` = '$user_id'");
+            if($result_change_user_role){
+                if($result_change_user_role->num_rows > 0){
+                    $result_update_change_user_name = $this->update_where("users", "`user_role` = '$change_user_role'", "`user_id` = '$user_id'");
+                    
+                    if($result_update_change_user_name){
+                        echo '
+                        <script>
+                        success_alert("Success !!", "User role has been changed successfully !!");
+                        </script>
+                        ';
+                    }else{
+                        echo '
+                        <script>
+                        danger_alert("Danger !!", "User role cannot been changed successfully !!");
+                        </script>
+                        ';
+                    }
+                }
+            }
+
+        }
+        
+
+
+    }
+
+    public function check_admin_access(){
+        $user_role = $_SESSION['user_role'];
+
+        if($user_role != 'admin'){
+            echo '
+            <script>
+            location.href = "/dashboard";
+            </script>
+            ';
+        }
+        
+        // $result_check_user_admin_access = $this->get_data_where("users", "`user_id` = '$user_id'");
+
+        // if($result_check_user_admin_access){
+        //     if($result_check_user_admin_access->num_rows > 0){
+        //         while($row = $result_check_user_admin_access->fetch_assoc()){
+        //             $admin_access = $row['user_role'];
+        //             if($admin_access == $_SESSION['use_role'] && $admin_access != 'admin')
+        //         }
+        //     }
+        // }
+        
+    }
+
+    public function check_block_user(){
+        $user_id = $_SESSION['user_id'];
+
+        $result_check_user_block_status = $this->get_data_where("users", "`user_id` = '$user_id'");
+
+        if($result_check_user_block_status){
+            if($result_check_user_block_status->num_rows){
+                while($row = $result_check_user_block_status->fetch_assoc()){
+                    $user_block_status = $row['user_block_status'];
+                   
+                }
+              
+            }
+        }
+
+        if($user_block_status == 'user_blocked'){
+            echo '
+            <script>
+            location.href = "/user_blocked"
+            </script>
+            ';
+        }
+        
+    }
+
+    public function block_and_unblock_user(){
+        if(isset($_POST['block_user'])){
+            $user_id = $this->pure_data($_POST['user_id']);
+
+            $result_block_user = $this->update_where("users", "`user_block_status` = 'user_blocked'", "`user_id` = '$user_id'");
+
+            if($result_block_user){
+                echo '
+                <script>
+                success_alert("Success !!", "The user has been blocked successfully !!");
+                </script>
+                ';
+            }else{
+                echo '
+                <script>
+                danger_alert("Error !!", "The user has not been blocked successfully !!");
+                </script>
+                ';
+            }
+        }
+
+        if(isset($_POST['unblock_user'])){
+            $user_id = $this->pure_data($_POST['user_id']);
+
+            $result_block_user = $this->update_where("users", "`user_block_status` = ''", "`user_id` = '$user_id'");
+
+            if($result_block_user){
+                echo '
+                <script>
+                success_alert("Success !!", "The user has been unblocked successfully !!");
+                </script>
+                ';
+            }else{
+                echo '
+                <script>
+                danger_alert("Error !!", "The user has not been unblocked successfully !!");
+                </script>
+                ';
+            }
+        }
+    }
+
+
+    public function check_submitted_homework()
+    {
+        if (isset($_POST['check_submitted_homework'])) {
+            $editor_code = $this->pure_data($_POST['editor_code']);
+            $language = $_POST['language'];
+            $homework_id = $this->pure_data($_POST['homework_id']);
+            $homework_problem_id = $this->pure_data($_POST['homework_problem_id']);
+            $homework_inspection_result = $this->pure_data($_POST['homework_inspection_result']);
+            $wrong_solution_reason = $this->pure_data($_POST['wrong_solution_reason']);
+            $submitted_user_id = $this->pure_data($_POST['submitted_user_id']);
+
+        //   die();
+            // $submitted_user_id = $_SESSION['user_id'];
+            
+            //  check if the data is already exists on the database
+
+            // $result_check_homework_submission = $this->get_data_where("homework_submission", "`homework_id` = '$homework_id' AND `homework_problem_id` = '$homework_problem_id' AND `submitted_user_id` = '$submitted_user_id'");
+
+            // if ($result_check_homework_submission) {
+            //     if ($result_check_homework_submission->num_rows < 0) {
+            //         // that means the data and the homework submission already exists on the db
+            //         echo '
+            //         <script>
+            //         danger_alert("Error !!", "Your homework is already submitted and exists on records !! You cannot resubmit a homework which has been already submitted !!")
+            //         </script>
+            //         ';
+            //         return;
+            //     }
+            // }
+
+            $result_update_check_homework = $this->update_where("homework_submission", "`check_submitted_homework_status` = 'checked', `homework_inspection_result` = '$homework_inspection_result', `wrong_solution_reason` = '$wrong_solution_reason'", "`homework_id` = '$homework_id' AND `homework_problem_id` = '$homework_problem_id' AND `submitted_user_id` = '$submitted_user_id'");
+
+            if($result_update_check_homework){
+                echo '<script>success_alert("Success !!", "The submitted homework checkings has been updated successfully !!");</script>';
+            }else{
+                echo '<script>danger_alert("Error !!", "The submitted homework checkings cannot been updated successfully !! !! Please contact the developer as soon as possible !!");</script>';
+            }
+
+
+
+
+            // // Insert code submission
+            // $result_insert_code = $this->insert("homework_submission", "`homework_id`, `homework_problem_id`, `submitted_user_id`, `homework_code`, `code_language`", "'$homework_id', '$homework_problem_id', '$submitted_user_id', '$editor_code', '$language'");
+            // if (!$result_insert_code) {
+            //     echo '<script>danger_alert("Error !!", "The homework info cannot be submitted perfectly !! Please contact the developer as soon as possible !!");</script>';
+            //     return;
+            // }
+
+            // // Get the auto-increment ID for the homework submission
+            // $result_check_result_get_submission_id = $this->get_next_auto_increment_id_value("homework_submission");
+            // $row = $result_check_result_get_submission_id->fetch_assoc();
+            // $result_get_submission_id = $row['AUTO_INCREMENT'];
+
+            
 
             // Validate language selection
             if (empty($language)) {
@@ -825,6 +1011,123 @@ class controllers extends models
             $homework_title = $this->pure_data($_POST['homework_title']);
             $homework_status = $this->pure_data($_POST['homework_status']);
             $homework_files = $_FILES['homework_files']['name'];
+            $homework_files_tmp_name = $_FILES['homework_files']['tmp_name'];
+            $homework_submission_datetime = $this->pure_data($_POST['homework_submission_datetime']);
+
+            $homework_file_ext = pathinfo($homework_files, PATHINFO_EXTENSION);
+
+            // die();
+
+            if (isset($homework_files) && $homework_files != '') {
+
+                if ($homework_file_ext != 'pdf') {
+                    // that means the file is not pdf so that it will stop the process and return as it only uploads pdf files
+
+                    echo '
+                    <script>
+                    danger_alert("File is not supported !!", "You can only upload pdf files only !! Other files are not supported !!");
+                    </script>
+                    ';
+
+                    return;
+
+                }
+
+                // die();
+
+                $get_username = $_SESSION['username'];
+
+                $pure_username = str_replace(" ", "_", $get_username);
+
+                $upload_dir = __DIR__ . '/../assets/uploads/homeworks/' . $pure_username . '/';
+
+                // __DIR__ . '/../assets/uploads/homework_submits/';
+                if (!file_exists($upload_dir)) {
+                    // if the directory is not exists then create the directory
+                    mkdir($upload_dir, 0777, true);
+                    // mkdir()
+                }
+
+                $old_pure_file_name = str_replace(" ", "_", $homework_files);
+
+                $pure_file_name = str_replace(" ", "_", $homework_title);
+
+                $new_file_name = 'homework_' . $homework_id . '_' . $pure_file_name . '_' . '_' . $old_pure_file_name;
+                // $new_file_name = 'hw_id_' . $homework_id . '_hw_title_' . $pure_file_name . '_' . 'hw_file_name_' . $old_pure_file_name;
+
+                // $db_insert_file_name = $pure_username . $new_file_name;
+
+                $result_user_name = $this->update_where("homeworks", "`user_name` = '$pure_username'", "`homework_id` = '$homework_id'");
+
+                // user_name
+
+
+                // update the file name
+
+                $result_update_file_name = $this->update_where("homeworks", "`homework_file_name` = '$new_file_name'", "`homework_id` = '$homework_id'");
+
+                if ($result_update_file_name) {
+                    echo '
+                    <script>
+                    success_alert("Success !!", "File name has been updated successfully !!");
+                    </script>
+                    ';
+                }
+
+                // upload the file
+
+
+                $final_upload_dir = $upload_dir . $new_file_name;
+
+                if (move_uploaded_file($homework_files_tmp_name, $final_upload_dir)) {
+                    echo '
+                    <script>
+                    success_alert("Success !!", "Homework has been updated with file successfully !!");
+                    </script>
+                    ';
+                } else {
+                    echo '
+                    <script>
+                    danger_alert("Error !!", "Homework has not been updated with file successfully !!");
+                    </script>
+                    ';
+                }
+
+                // // check if the filename already exists on database
+                // $result_check_file_name = $this->get_data_where("homeworks", "`homework_file_name` = '$new_file_name' AND `homework_id` = '$homework_id'");
+
+                // if($result_check_file_name){
+                //     if($result_check_file_name->num_rows > 0){
+                //         // that means filename is exists on database and it should be update on it
+                //         $result_update_file_name = $this->update_where("homeworks", "`homework_file_name` = '$new_file_name'", "`homework_id` = '$homework_id'");
+                //     }
+
+                //     // else{
+                //     //     // that means the filename is not exists on database it should be insert on it
+
+                //     //     // $result_insert_file_name = $this->insert("homeworks", "`homework_file_name`", "'$new_file_name'");
+
+                //     // }
+                // }
+
+
+
+
+
+
+                // die();
+                // exit;
+
+                // add the filename on database
+                // $result_add_file_name = $this->insert();
+
+
+                // echo 'homework_file set';
+            } else {
+                // echo 'homework file is blank';
+            }
+
+            // die();
 
             // Check the problem count for the given homework ID
             $result_check_problem_count = $this->get_data_where("homeworks", "`homework_id` = '$homework_id'");
@@ -859,7 +1162,7 @@ class controllers extends models
             }
 
             // Update homework details
-            $result_update_homework_details = $this->update_where("homeworks", "`homework_title` = '$homework_title', `homework_status` = '$homework_status'", "`homework_id` = '$homework_id'");
+            $result_update_homework_details = $this->update_where("homeworks", "`homework_title` = '$homework_title', `homework_status` = '$homework_status', `homework_submission_datetime` = '$homework_submission_datetime'", "`homework_id` = '$homework_id'");
 
             if ($result_update_homework_details) {
                 echo '<script>success_alert("Success !!", "The homework has been updated successfully !!");</script>';

@@ -11,9 +11,7 @@ $active_name = "Submit Homework";
 
 require __DIR__ . "/inc/_header.php";
 // require __DIR__ . "/../../models/models.php";
-$controllers->check_block_user();
 $controllers->check_admin_access();
-
 
 
 $models = new models;
@@ -46,9 +44,9 @@ $starting_limit = ($page - 1) * $results_per_page;
 // $result = $models->make_query($sql);
 
 for ($page = 1; $page <= $total_pages; $page++) {
-    // echo '
-    // <a href="?page=' . $page . '"> ' . $page . ' </a>
-    // ';
+    echo '
+    <a href="?page=' . $page . '"> ' . $page . ' </a>
+    ';
 }
 
 
@@ -130,18 +128,18 @@ for ($page = 1; $page <= $total_pages; $page++) {
                                         <ul class="pagination">
                                             <li class="page-item">
                                                 <a class="page-link" href='<?php
-                                                
+
                                                 $get_page = $_GET['page'];
 
-                                               if(isset($_GET['page'])){
-                                                if($get_page > 1){
-                                                    echo '?page=' .  $get_page - 1;
-                                                }else{
-                                                    echo '?page=' . $get_page = 1;
+                                                if (isset($_GET['page'])) {
+                                                    if ($get_page > 1) {
+                                                        echo '?page=' . $get_page - 1;
+                                                    } else {
+                                                        echo '?page=' . $get_page = 1;
+                                                    }
                                                 }
-                                               }
 
-                                                
+
 
 
 
@@ -154,7 +152,7 @@ for ($page = 1; $page <= $total_pages; $page++) {
                                             <?php
 
                                             $get_total_pages = $controllers->pagination();
-                                            
+
 
 
                                             ?>
@@ -163,21 +161,21 @@ for ($page = 1; $page <= $total_pages; $page++) {
                                             <li class="page-item"><a class="page-link" href="#">3</a></li> -->
                                             <li class="page-item">
                                                 <a class="page-link" href="<?php
-                                                
 
-                                                if(isset($_GET['page'])){
-                                                $get_page = $_GET['page'];
 
-                                                    if($get_page < $get_total_pages){
-                                                        echo '?page=' .  $get_page + 1;
-                                                    }else{
+                                                if (isset($_GET['page'])) {
+                                                    $get_page = $_GET['page'];
+
+                                                    if ($get_page < $get_total_pages) {
+                                                        echo '?page=' . $get_page + 1;
+                                                    } else {
                                                         echo '?page=' . $get_page = $get_total_pages;
                                                     }
-                                                }else{
+                                                } else {
                                                     echo '?page=' . 2;
                                                 }
 
-                                                
+
 
 
 
@@ -195,6 +193,7 @@ for ($page = 1; $page <= $total_pages; $page++) {
                                                 <th scope="col">#</th>
                                                 <th scope="col">Homework Title</th>
                                                 <th scope="col">Homework Status</th>
+                                                <th scope="col">Homework Inspection Result</th>
                                                 <th scope="col">Submission Datetime</th>
                                                 <th scope="col">Action</th>
                                             </tr>
@@ -207,7 +206,14 @@ for ($page = 1; $page <= $total_pages; $page++) {
 // $sql = "SELECT * FROM homeworks LIMIT $starting_limit, $results_per_page";
 // $result = $models->make_query($sql);
                                             // Retrieve selected results from database
-                                            $sql = "SELECT * FROM homeworks LIMIT $starting_limit, $results_per_page";
+                                            // $sql = "SELECT * FROM homeworks  LIMIT $starting_limit, $results_per_page";
+                                            // $sql = "SELECT * FROM `homework_submission` WHERE `check_submitted_homework_status` = '' or `check_submitted_homework_status` = 'unchecked'  LIMIT $starting_limit, $results_per_page";
+                                            
+
+                                            $sql = "SELECT * FROM homeworks INNER JOIN homework_submission ON homeworks.homework_id = homework_submission.homework_id WHERE `check_submitted_homework_status` = '' or `check_submitted_homework_status` = 'unchecked' LIMIT $starting_limit, $results_per_page";
+
+                                            // $sql = "SELECT *  FROM homeworks INNER JOIN homework_submission ON homeworks.homework_id = homework_submission.homework_id INNER JOIN homework_problems ON homework_problems.homework_id = homework_submission.homework_id WHERE `check_submitted_homework_status` = '' or `check_submitted_homework_status` = 'unchecked' LIMIT $starting_limit, $results_per_page";
+                                            
                                             $result_manage_homework = $models->make_query($sql);
 
                                             // $result_manage_homework = $controllers->get_data("homeworks");
@@ -220,11 +226,13 @@ for ($page = 1; $page <= $total_pages; $page++) {
                                                 <tr>
                                                 <th scope="row">' . $manage_homework_sl_no . '</th>
                                                 <td>' . $row['homework_title'] . '</td>
+                                                
                                                 <td>' . $row['homework_status'] . '</td>
-                                                <td>' . $row['homework_submission_datetime'] . '</td>
+                                                <td>' . $row['homework_inspection_result'] . '</td>
+                                                <td>' . date("d M Y h:i:s a", strtotime($row['homework_submission_datetime'])) . '</td>
                                                 <td>
-                                                <a href="/homework_details?homework_id=' . $row['homework_id'] . '">
-                                                <button class = "btn btn-sm btn-outline-dark">Homework Details</button>
+                                                <a href="/check_submitted_homework?homework_id=' . $row['homework_id'] . '&homework_problem_id='. $row['homework_problem_id'] .'">
+                                                <button class = "btn btn-sm btn-outline-dark">Check Homework</button>
                                                 </a>
                                                 </td>
                                                 </tr>

@@ -11,6 +11,8 @@ $active_name = "Submit Homework";
 
 require __DIR__ . "/inc/_header.php";
 // require __DIR__ . "/../../models/models.php";
+$controllers->check_block_user();
+
 
 
 $models = new models;
@@ -192,8 +194,15 @@ $starting_limit = ($page - 1) * $results_per_page;
 // $sql = "SELECT * FROM homeworks LIMIT $starting_limit, $results_per_page";
 // $result = $models->make_query($sql);
                                             // Retrieve selected results from database
-                                            $sql = "SELECT * FROM homeworks LIMIT $starting_limit, $results_per_page";
+                                            // $sql = "SELECT * FROM homeworks LIMIT $starting_limit, $results_per_page";
+                                            // $result_manage_homework = $models->make_query($sql);
+
+                                            $user_id = $_SESSION['user_id'];
+
+                                            $sql = "SELECT * FROM homeworks INNER JOIN homework_submission ON homeworks.homework_id = homework_submission.homework_id WHERE `submitted_user_id` = '$user_id'  ORDER BY `homework_submission`.`homework_submission_id` ASC LIMIT $starting_limit, $results_per_page";
                                             $result_manage_homework = $models->make_query($sql);
+
+
 
                                             // $result_manage_homework = $controllers->get_data("homeworks");
                                             
@@ -201,6 +210,7 @@ $starting_limit = ($page - 1) * $results_per_page;
                                                 if ($result_manage_homework->num_rows > 0) {
                                                     $manage_homework_sl_no = 1;
                                                     while ($row = $result_manage_homework->fetch_assoc()) {
+                                                        $homework_problem_id = $row['homework_problem_id'];
                                                         echo '
                                                 <tr>
                                                 <th scope="row">' . $manage_homework_sl_no . '</th>
@@ -208,8 +218,8 @@ $starting_limit = ($page - 1) * $results_per_page;
                                                 <td>' . $row['homework_status'] . '</td>
                                                 <td>' . $row['homework_submission_datetime'] . '</td>
                                                 <td>
-                                                <a href="/homework_details?homework_id=' . $row['homework_id'] . '">
-                                                <button class = "btn btn-sm btn-outline-dark">Homework Details</button>
+                                                <a href="/manage_code_details?homework_id=' . $row['homework_id'] . '&homework_problem_id='. $row['homework_problem_id'] .'">
+                                                <button class = "btn btn-sm btn-outline-dark">Homework Inspection Result</button>
                                                 </a>
                                                 </td>
                                                 </tr>

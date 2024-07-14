@@ -10,18 +10,15 @@ $active_name = "Submit Homework";
 
 
 require __DIR__ . "/inc/_header.php";
+$controllers->check_admin_access();
 
 
-
-
-if(!isset($_GET['homework_id'])){
-    header("location: /manage_homework");
+if(!isset($_GET['user_id'])){
+    header("location: /manage_users");
 }
 
-$controllers->homework_details_update();
-$controllers->check_block_user();
-
-$controllers->check_admin_access();
+$controllers->block_and_unblock_user();
+$controllers->change_a_user_role();
 
 
 
@@ -100,114 +97,80 @@ $controllers->check_admin_access();
                         <div class="submit_home_work_section mt-4">
                     <div class="container">
                         <div class="section_title text-center fs-4 mb-4">
-                            Update your homework
+                            Update user details
                         </div>
                         <form action="" method="post" enctype="multipart/form-data" >
 
-                        <?php
+                        <div class="mb-4 mt-4 pt-4">
+                            <?php
 
-                        $get_homework_id = $controllers->pure_data($_GET['homework_id']);
+                            if(!isset($_GET['user_id']) || $_GET['user_id'] == ''){
+                                echo '
+                                <script>
+                                location.href = "/manage_users"
+                                </script>
+                                ';
 
-                        ?>
+                            }
+                            
+                            $user_id = $_GET['user_id'];
 
-                        <input type="hidden" name="homework_id" value="<?php echo $get_homework_id ?>">
-                        
+                            $result_check_user_details = $controllers->get_data_where("users", "`user_id` = '$user_id'");
 
-                        <?php
+                            if($result_check_user_details){
+                                if($result_check_user_details->num_rows > 0){
+                                    while($row = $result_check_user_details->fetch_assoc()){
 
-                        $get_homework_id = $controllers->pure_data($_GET['homework_id']);
-
-                        $result_check_homework_details = $controllers->get_data_where("homeworks", "`homework_id` = '$get_homework_id'");
-
-                        if($result_check_homework_details){
-                            if($result_check_homework_details->num_rows == 1){
-                                while($row = $result_check_homework_details->fetch_assoc()){
-                                    $homework_submission_datetime = $row['homework_submission_datetime'];
-                                    $problems_count = $row['problems_count'];
-                                    $homework_status = $row['homework_status'];
-
-                                    echo '
-                                    <div class="mb-3 me-4 pe-4">
-                                     <label for="homework_title"class="mt-4 mb-2" >Homework status</label>
-                                    
-                                        <input type="text" class="form-control" placeholder="Enter Homework title" value="'. $row['homework_title'] .'" name="homework_title" id="homework_title">
-                           
-                                    </div>
-
-
-                           
-
-
-
-
-                                    ';
-
+                                        $user_block_status = $row['user_block_status'];
+                                        
+                                        echo '<div>Username : '. $row['user_name'] .'</div>';
+                                        echo '<div>Email : '. $row['email'] .'</div>';
+                                        echo '<div>User Role : '. $row['user_role'] .'</div>';
+                                        echo '<div>User Block Status : '. $row['user_block_status'] .'</div>';
+                                        echo '<div>Joined Datetime : '. date("d M Y h:i:s a", strtotime($row['datetime'])) .'</div>';
+                                    }
                                 }
                             }
-                        }
 
-                        $result_check_problem = $controllers->get_data_where("homework_problems", "`homework_id` = '$get_homework_id'");
-
-                        if($result_check_problem){
-                            if($result_check_problem->num_rows > 0){
-                                $problem_sl_no = 1;
-                                while($row = $result_check_problem->fetch_assoc()){
-                                    echo '
-                                    
-                                    <input type="hidden" name="homework_problem_id_'. $problem_sl_no .'" value="'. $row['homework_problem_id'] .'" >
-                                    
-                                <div class="mb-3 me-4 pe-4">
-                                    <label for="homework_problem_name"class="mt-4 mb-2 primary-color" >Homework Problem no '. $problem_sl_no .'</label>
-                                
-                                    <input type="text" name="homework_problem_name_'. $problem_sl_no .'" class="form-control " id="homework_problem_name" value="'. $row['homework_problem_name'] .'" placeholder="Update Homework Problem no '. $problem_sl_no .'" >
-                                 </div>
-                                    
-                                    ';
-
-                                    $problem_sl_no++;
-
-                                }
-                            }
-                        }
-
-                        ?>
-
-
-
-                        <div class="mb-3 me-4 pe-4">
-                            <input type="file" name="homework_files" class="form-control mt-4" id="homework_files">
+                            ?>
                         </div>
 
+                        <div class="mb-3 mt-4 pt-4 <?php
                         
-                        <div class="mb-3 me-4 pe-4">
+                        if($user_block_status == 'user_blocked'){
+                            echo 'd-none';
+                        }
+                        
+                        ?>">
+                            
+                            <input type="hidden" name="user_id" value="<?php echo $user_id ?>">
+                            <button type="submit" class="btn  btn-outline-danger" name="block_user">Block user</button>
+                        </div>
+                        <div class="mb-3 mt-4 pt-4 <?php 
+                        
+                        if($user_block_status == ''){
+                            echo 'd-none';
+                        }
+                        
+                        ?>">
+                            <input type="hidden" name="user_id" value="<?php echo $user_id ?>">
+                            <button type="submit" class="btn  btn-outline-success" name="unblock_user">UnBlock user</button>
+                        </div>
+                    
 
-                            <label for="homework_status"class="mt-4 mb-2" >Homework status</label>
-
-                            <select name="homework_status" id="homework_status" class="form-control">
-                                <option value="">Select the Homework Status</option>
-                                <option value="running" <?php 
-                                if($homework_status == 'running'){
-                                    echo "selected";
-                                }
-                                ?> >Homework submit is Running</option>
-                                <option value="time_expired" <?php 
-                                if($homework_status == 'time_expired'){
-                                    echo "selected";
-                                }
-                                ?> >Homework submitting time is expired</option>
+                        <div class="user_role_section">
+                         <div class="mb-3 mt-4 pt-4">
+                        <label for="change_user_role mt-4 mb-4 pb-4">Change user role</label>
+                         <select name="change_user_role" class="form-control mt-4" id="change_user_role">
+                                <option value="admin">Admin</option>
+                                <option value="team_member">Team member</option>
                             </select>
+                         </div>
+                         <div class="mb-3 mt-4 pt-4">
+                         <button type="submit" class="btn btn-outline-primary" name="change_user_role_btn" >Change User Role</button>
+                         </div>
                         </div>
 
-                        <div class="mb-3 me-4 pe-4">
-                            <label for="homework_submission_datetime">Homework Submission Datetime</label>
-                            <input type="datetime-local" class="form-control mt-4 " name="homework_submission_datetime" value="<?php echo date('Y-m-d\TH:i', strtotime($homework_submission_datetime)) ?>" id="homework_submission_datetime"  >
-                        </div>
-
-
-
-                        <div class="mb-3 mt-4 pt-4">
-                            <button type="submit" class="btn  btn-outline-dark" name="update_homework_details">Update Homework Details</button>
-                        </div>
                         <div class="mb-3 mt-4 pt-4">
                             <a href="/manage_homework" class="nav-link">
                             <button type="button" class="btn btn-sm btn-outline-dark">Back to Manage Homework</button>

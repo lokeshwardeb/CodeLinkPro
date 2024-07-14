@@ -3,6 +3,8 @@ include __DIR__ . "/inc/_sidebar_active_class.php";
 $dashboard_active_class = "sidebar_active_btn";
 $active_name = "Dashboard";
 require __DIR__ . "/inc/_header.php";
+$controllers->check_block_user();
+// echo $_SESSION['user_role']
 ?>
 
 <main>
@@ -24,8 +26,12 @@ require __DIR__ . "/inc/_header.php";
             <div class="col-md-8 col-sm-12">
                 <div class="section_main_content mt-4">
                     <div class="container m-4 p-4">
-                        <div class="greetings_section mb-4">
-                            Good Morning, Protik !!
+                        <div class="greetings_main_section">
+                            <?php
+
+                            include_once __DIR__ . '/inc/_greetings_section.php';
+
+                            ?>
                         </div>
                         <div class="dashboard_navigation">
                             <div class="row">
@@ -35,7 +41,7 @@ require __DIR__ . "/inc/_header.php";
                                     </a>
                                 </div>
                                 <div class="col-md-6">
-                                    <a href="">
+                                    <a href="/new_homework">
                                         <button class="btn dash_navi_btn">New Homework</button>
                                     </a>
                                 </div>
