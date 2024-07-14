@@ -62,14 +62,17 @@ $controllers->check_block_user();
                                         
 $homework_id = $_GET['homework_id'];
 $homework_problem_id = $_GET['homework_problem_id'];
+$submitted_user_id = $_SESSION['user_id'];
+// $submitted_user_id = $_GET['suid'];
+// $get_submitted_user_id = $_GET['suid'];
 
 
-$result_check_submission = $controllers->get_data_where("homework_submission", "`homework_id` = '$homework_id' AND `homework_problem_id` = '$homework_problem_id'");
+$result_check_submission = $controllers->get_data_where("homework_submission", "`homework_id` = '$homework_id' AND `homework_problem_id` = '$homework_problem_id' AND `submitted_user_id` = '$submitted_user_id'");
 
 if($result_check_submission){
     if($result_check_submission->num_rows > 0){
         while($row = $result_check_submission->fetch_assoc()){
-            $submitted_user_id = $row['submitted_user_id'];
+            // $submitted_user_id = $row['submitted_user_id'];
             $code_language = $row['code_language'];
         }
     }
@@ -92,6 +95,8 @@ if($result_check_submission){
                                                     $submitted_user_role = $row['user_role'];
                                                     $homework_inspection_result = $row['homework_inspection_result'];
                                                 }
+                                            }else{
+                                                $submitted_user_name = '';
                                             }
                                         }
 
@@ -162,7 +167,7 @@ if($result_check_submission){
                               <div class="integrate_code_editor">
                                 <?php
 
-                                $user_id = $_SESSION['$user_id'];
+                                $user_id = $_SESSION['user_id'];
 
                                 $result_check_submission = $controllers->get_data_where("homework_submission", "`homework_id` = '$homework_id' AND `homework_problem_id` = '$homework_problem_id' AND `submitted_user_id` = '$user_id'");
 
@@ -175,7 +180,8 @@ if($result_check_submission){
                                     }
                                 }
 
-                                include __DIR__ . '/inc/_check_homework_code_editor.php';
+                                include __DIR__ . '/inc/_check_manage_code_homework_users.php';
+                                // include __DIR__ . '/inc/_check_homework_code_editor.php';
                                 
                                 ?>
                               </div>
@@ -210,13 +216,13 @@ if($result_check_submission){
 
                                     <div class="mb-3 mt-4 pt-4 me-4 pe-4 <?php
                                     
-                                    if($homework_inspection_result == 'correct_solution'){
-                                        echo 'd-none';
-                                    }
+                                    // if($homework_inspection_result == 'correct_solution'){
+                                    //     echo 'd-none';
+                                    // }
                                     
                                     
                                     ?> " >
-                                        <label for="wrong_solution_reason">Where was the wrong ? Explain the wrong solution reason</label>
+                                        <label for="wrong_solution_reason">Questions from the inspector ? Is there was anything wrong or error ? Where was the wrong ? Here is the questions and explaination the wrong solution reason such as : Where was your wrong or what steps can make the code more than better</label>
                                         <textarea name="wrong_solution_reason" disabled class="form-control mt-4" id="wrong_solution_reason" cols="30" rows="10"></textarea>
                                     </div>
 <!-- 

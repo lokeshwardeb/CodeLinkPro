@@ -86,14 +86,14 @@ class controllers extends models
 
     }
 
-    public function pagination()
+    public function pagination($table_name = "homeworks", $where_conditions_and_values='1')
     {
 
         // Define how many results per page
         $results_per_page = 5;
 
         // Find out the number of results stored in database
-        $sql = "SELECT COUNT(*) AS total FROM homeworks";
+        $sql = "SELECT COUNT(*) AS total FROM `$table_name` WHERE $where_conditions_and_values";
         $result = $this->make_query($sql);
 
         // $result = $models->make_query($sql);
@@ -1382,6 +1382,12 @@ class controllers extends models
                             header("location: /dashboard");
 
 
+                        }else{
+                            echo '
+                            <script>
+                            danger_alert("Password is not correct !!", "Please provide correct credentials to login");
+                            </script>
+                            ';
                         }
                     }
                 }else{
@@ -1424,6 +1430,20 @@ class controllers extends models
                     } else {
                         // that means the user is not exist and it should continue the signup process
 
+                        
+                        if($password == ''){
+                            // that means the password is blank and it should not continue the process and it should through an error msg
+                            echo '
+                            <script>
+                            danger_alert("Password cannot be blank !!", "Your submitted password is blank !! Please enter an password !!");
+                            </script>
+                            ';
+                            return;
+                        }
+
+                    
+
+
                         // password hashing algorithm
                         $hash = password_hash($password, PASSWORD_DEFAULT);
 
@@ -1454,7 +1474,7 @@ class controllers extends models
                 echo '
                 
                 <script>
-                danger_alert("Error !!", "The password doesnot match !! Please give the correct password");
+                danger_alert("Password doesnot match !!", "The password and confirm password are not match !! Please give correct credentials !!");
                 </script>
                 
                 ';

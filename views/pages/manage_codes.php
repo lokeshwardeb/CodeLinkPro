@@ -13,6 +13,8 @@ require __DIR__ . "/inc/_header.php";
 // require __DIR__ . "/../../models/models.php";
 $controllers->check_block_user();
 
+$user_id = $_SESSION['user_id'];
+
 
 
 $models = new models;
@@ -21,7 +23,8 @@ $models = new models;
 $results_per_page = 5;
 
 // Find out the number of results stored in database
-$sql = "SELECT COUNT(*) AS total FROM homeworks";
+// $sql = "SELECT COUNT(*) AS total FROM homeworks";
+$sql = "SELECT COUNT(*) AS total FROM `homework_submission` WHERE `submitted_user_id` = '$user_id'";
 $result = $models->make_query($sql);
 
 $row = $result->fetch_assoc();
@@ -135,7 +138,7 @@ $starting_limit = ($page - 1) * $results_per_page;
 
                                             <?php
 
-                                            $get_total_pages = $controllers->pagination();
+                                            $get_total_pages = $controllers->pagination("homework_submission", "`submitted_user_id` = '$user_id'");
                                             
 
 

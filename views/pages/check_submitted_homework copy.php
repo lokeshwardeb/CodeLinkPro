@@ -233,7 +233,7 @@ if($result_check_submission){
                                     </div>
 
                                     <div class="mb-3 mt-4 pt-4 me-4 pe-4">
-                                        <label for="wrong_solution_reason">Ask any questions to the submitted user about the code or explain if there has any error or where was the wrong ? Explain the wrong solution reason or which steps should follow and how the code could be better </label>
+                                        <label for="wrong_solution_reason">Where was the wrong ? Explain the wrong solution reason</label>
                                         <textarea name="wrong_solution_reason" class="form-control mt-4" id="wrong_solution_reason" cols="30" rows="10"></textarea>
                                     </div>
 <!-- 

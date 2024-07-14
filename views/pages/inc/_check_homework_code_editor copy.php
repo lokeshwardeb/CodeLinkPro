@@ -128,9 +128,7 @@
                                                 } else {
                                                     // echo 'To write a code at first select a language and then write your codes here !!';
 
-                                                    $submitted_user_id = $_GET['suid'];
-
-                                                    $result_get_submitted_code = $controllers->get_data_where("homework_submission", "`homework_id` = '$homework_id' AND `homework_problem_id` = '$homework_problem_id' AND `submitted_user_id` = '$submitted_user_id'");
+                                                    $result_get_submitted_code = $controllers->get_data_where("homework_submission", "`homework_id` = '$homework_id' AND `homework_problem_id` = '$homework_problem_id'");
 
 
                                                     if($result_get_submitted_code){

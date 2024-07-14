@@ -192,8 +192,6 @@ for ($page = 1; $page <= $total_pages; $page++) {
                                             <tr>
                                                 <th scope="col">#</th>
                                                 <th scope="col">Homework Title</th>
-                                                <th scope="col">Homework Problem Id</th>
-                                                <th scope="col">Homework Submitted User Id</th>
                                                 <th scope="col">Homework Status</th>
                                                 <th scope="col">Homework Inspection Result</th>
                                                 <th scope="col">Submission Datetime</th>
@@ -212,7 +210,7 @@ for ($page = 1; $page <= $total_pages; $page++) {
                                             // $sql = "SELECT * FROM `homework_submission` WHERE `check_submitted_homework_status` = '' or `check_submitted_homework_status` = 'unchecked'  LIMIT $starting_limit, $results_per_page";
                                             
 
-                                            $sql = "SELECT * FROM homeworks INNER JOIN homework_submission ON homeworks.homework_id = homework_submission.homework_id ORDER BY `homework_submission`.`homework_submission_id` ASC LIMIT $starting_limit, $results_per_page";
+                                            $sql = "SELECT * FROM homeworks INNER JOIN homework_submission ON homeworks.homework_id = homework_submission.homework_id WHERE `check_submitted_homework_status` = '' or `check_submitted_homework_status` = 'unchecked' LIMIT $starting_limit, $results_per_page";
 
                                             // $sql = "SELECT *  FROM homeworks INNER JOIN homework_submission ON homeworks.homework_id = homework_submission.homework_id INNER JOIN homework_problems ON homework_problems.homework_id = homework_submission.homework_id WHERE `check_submitted_homework_status` = '' or `check_submitted_homework_status` = 'unchecked' LIMIT $starting_limit, $results_per_page";
                                             
@@ -224,22 +222,16 @@ for ($page = 1; $page <= $total_pages; $page++) {
                                                 if ($result_manage_homework->num_rows > 0) {
                                                     $manage_homework_sl_no = 1;
                                                     while ($row = $result_manage_homework->fetch_assoc()) {
-
-                                                        $submitted_user_id = $row['submitted_user_id'];
-                                                        $homework_problem_id = $row['homework_problem_id'];
-
                                                         echo '
                                                 <tr>
                                                 <th scope="row">' . $manage_homework_sl_no . '</th>
                                                 <td>' . $row['homework_title'] . '</td>
-                                                <td>' . $row['homework_problem_id'] . '</td>
-                                                <td>' . $row['submitted_user_id'] . '</td>
                                                 
                                                 <td>' . $row['homework_status'] . '</td>
                                                 <td>' . $row['homework_inspection_result'] . '</td>
-                                                <td>' . $row['homework_submission_datetime'] . '</td>
+                                                <td>' . date("d M Y h:i:s a", strtotime($row['homework_submission_datetime'])) . '</td>
                                                 <td>
-                                                <a href="/check_submitted_homework?homework_id=' . $row['homework_id'] . '&homework_problem_id='. $row['homework_problem_id'] .'&suid='. $row['submitted_user_id'] .'">
+                                                <a href="/check_submitted_homework?homework_id=' . $row['homework_id'] . '&homework_problem_id='. $row['homework_problem_id'] .'">
                                                 <button class = "btn btn-sm btn-outline-dark">Check Homework</button>
                                                 </a>
                                                 </td>
