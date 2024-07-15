@@ -106,6 +106,7 @@ if($result_check_submission){
                                                 $submitted_user_name = $row['user_name'];
                                                 $submitted_user_role = $row['user_role'];
                                                 $homework_inspection_result = $row['homework_inspection_result'];
+                                                $wrong_solution_reason = $row['wrong_solution_reason'];
                                             }
                                             // if($result_user_info->num_rows > 0){
                                             //     // while($row = $result_user_info->fetch_assoc()){
@@ -234,7 +235,13 @@ if($result_check_submission){
 
                                     <div class="mb-3 mt-4 pt-4 me-4 pe-4">
                                         <label for="wrong_solution_reason">Ask any questions to the submitted user about the code or explain if there has any error or where was the wrong ? Explain the wrong solution reason or which steps should follow and how the code could be better </label>
-                                        <textarea name="wrong_solution_reason" class="form-control mt-4" id="wrong_solution_reason" cols="30" rows="10"></textarea>
+                                        <textarea name="wrong_solution_reason" class="form-control mt-4" id="wrong_solution_reason" cols="30" rows="10"><?php 
+                                        
+
+                                        echo $wrong_solution_reason;
+                                        
+                                        
+                                        ?></textarea>
                                     </div>
 <!-- 
                                     <div class="mb-3 me-4 mt-4 pt-4 pe-4">

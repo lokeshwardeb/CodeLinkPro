@@ -20,7 +20,9 @@ $models = new models;
 $results_per_page = 5;
 
 // Find out the number of results stored in database
-$sql = "SELECT COUNT(*) AS total FROM homeworks";
+$sql = "SELECT COUNT(*) AS total FROM homeworks INNER JOIN homework_submission ON homeworks.homework_id = homework_submission.homework_id ORDER BY `homework_submission`.`homework_submission_id` DESC";
+// $sql = "SELECT COUNT(*) AS total FROM homeworks";
+
 $result = $models->make_query($sql);
 
 $row = $result->fetch_assoc();
@@ -43,11 +45,11 @@ $starting_limit = ($page - 1) * $results_per_page;
 // $sql = "SELECT * FROM homeworks LIMIT $starting_limit, $results_per_page";
 // $result = $models->make_query($sql);
 
-for ($page = 1; $page <= $total_pages; $page++) {
-    echo '
-    <a href="?page=' . $page . '"> ' . $page . ' </a>
-    ';
-}
+// for ($page = 1; $page <= $total_pages; $page++) {
+//     echo '
+//     <a href="?page=' . $page . '"> ' . $page . ' </a>
+//     ';
+// }
 
 
 
@@ -151,7 +153,20 @@ for ($page = 1; $page <= $total_pages; $page++) {
 
                                             <?php
 
-                                            $get_total_pages = $controllers->pagination();
+                                            // $get_total_pages = $controllers->pagination();
+                                            // $get_total_pages = $controllers->join_pagination("homeworks INNER JOIN homework_submission ON homeworks.homework_id = homework_submission.homework_id ORDER BY `homework_submission`.`homework_submission_id`");
+
+                                            
+
+                                            for ($page = 1; $page <= $total_pages; $page++) {
+                                                echo '
+                                        <li class="page-item"><a class="page-link" href="?page=' . $page . '">' . $page . '</a></li>
+                                        ';
+                                                // echo '
+                                                // <a href="?page='. $page .'"> '. $page .' </a>
+                                                // ';
+                                            }
+                                    
 
 
 
@@ -162,19 +177,44 @@ for ($page = 1; $page <= $total_pages; $page++) {
                                             <li class="page-item">
                                                 <a class="page-link" href="<?php
 
+$get_page = $_GET['page'];
 
-                                                if (isset($_GET['page'])) {
-                                                    $get_page = $_GET['page'];
+if (isset($_GET['page'])) {
+    if ($get_page < $total_pages) {
+        echo '?page=' . $get_page + 1;
+    } else {
+        echo '?page=' . $get_page = $total_pages;
+    }
+}
 
-                                                    if ($get_page < $get_total_pages) {
-                                                        echo '?page=' . $get_page + 1;
-                                                    } else {
-                                                        echo '?page=' . $get_page = $get_total_pages;
-                                                    }
-                                                } else {
-                                                    echo '?page=' . 2;
-                                                }
 
+                                                // if (isset($_GET['page']) || $_GET['page'] != '') {
+                                                //     $get_page = $_GET['page'];
+
+                                                //     // echo '?page=' . $get_page + 1;
+
+                                                // if ($get_page < $get_total_pages) {
+                                                //     echo '?page=' . $get_page + 1;
+
+                                                // }else{
+                                                
+                                                //     echo '?page=' . $get_page = $total_pages;
+                                                
+                                                
+                                                // }
+
+                                                
+
+                                                //     // if ($get_page < $get_total_pages) {
+                                                //     //     echo '?page=' . $get_page + 1;
+                                                //     // } else {
+                                                //     //     echo '?page=' . $get_total_pages;
+                                                //         // echo '?page=' . $get_page = $get_total_pages;
+                                                //     // }
+                                                // }
+                                                // else {
+                                                //     echo '?page=' . 2;
+                                                // }
 
 
 
@@ -194,6 +234,7 @@ for ($page = 1; $page <= $total_pages; $page++) {
                                                 <th scope="col">Homework Title</th>
                                                 <th scope="col">Homework Problem Id</th>
                                                 <th scope="col">Homework Submitted User Id</th>
+                                                <th scope="col">Homework Submitted User Name</th>
                                                 <th scope="col">Homework Status</th>
                                                 <th scope="col">Homework Inspection Result</th>
                                                 <th scope="col">Submission Datetime</th>
@@ -204,6 +245,11 @@ for ($page = 1; $page <= $total_pages; $page++) {
 
                                             <?php
 
+                                            // new submitted homework sql
+
+                                            // $sql = "SELECT * FROM homeworks INNER JOIN homework_submission ON homeworks.homework_id = homework_submission.homework_id WHERE `check_submitted_homework_status` = '' or `check_submitted_homework_status` = 'unchecked' LIMIT $starting_limit, $results_per_page";
+
+
                                             //                                         // Retrieve selected results from database
 // $sql = "SELECT * FROM homeworks LIMIT $starting_limit, $results_per_page";
 // $result = $models->make_query($sql);
@@ -212,7 +258,8 @@ for ($page = 1; $page <= $total_pages; $page++) {
                                             // $sql = "SELECT * FROM `homework_submission` WHERE `check_submitted_homework_status` = '' or `check_submitted_homework_status` = 'unchecked'  LIMIT $starting_limit, $results_per_page";
                                             
 
-                                            $sql = "SELECT * FROM homeworks INNER JOIN homework_submission ON homeworks.homework_id = homework_submission.homework_id ORDER BY `homework_submission`.`homework_submission_id` ASC LIMIT $starting_limit, $results_per_page";
+                                            // $sql = "SELECT * FROM homeworks INNER JOIN homework_submission ON homeworks.homework_id = homework_submission.homework_id ORDER BY `homework_submission`.`homework_submission_id` ASC LIMIT $starting_limit, $results_per_page";
+                                            $sql = "SELECT * FROM homeworks INNER JOIN homework_submission ON homeworks.homework_id = homework_submission.homework_id ORDER BY `homework_submission`.`homework_submission_id` DESC LIMIT $starting_limit, $results_per_page";
 
                                             // $sql = "SELECT *  FROM homeworks INNER JOIN homework_submission ON homeworks.homework_id = homework_submission.homework_id INNER JOIN homework_problems ON homework_problems.homework_id = homework_submission.homework_id WHERE `check_submitted_homework_status` = '' or `check_submitted_homework_status` = 'unchecked' LIMIT $starting_limit, $results_per_page";
                                             
@@ -225,8 +272,16 @@ for ($page = 1; $page <= $total_pages; $page++) {
                                                     $manage_homework_sl_no = 1;
                                                     while ($row = $result_manage_homework->fetch_assoc()) {
 
+
                                                         $submitted_user_id = $row['submitted_user_id'];
                                                         $homework_problem_id = $row['homework_problem_id'];
+
+                                                        
+                                                        $result_get_user_name = $controllers->get_data_where("users", "`user_id` = '$submitted_user_id'");
+
+                                                        while($user_row = $result_get_user_name->fetch_assoc()){
+                                                            $get_submitted_homework_username = $user_row['user_name'];
+                                                        }
 
                                                         echo '
                                                 <tr>
@@ -234,10 +289,11 @@ for ($page = 1; $page <= $total_pages; $page++) {
                                                 <td>' . $row['homework_title'] . '</td>
                                                 <td>' . $row['homework_problem_id'] . '</td>
                                                 <td>' . $row['submitted_user_id'] . '</td>
+                                                <td>' . $get_submitted_homework_username . '</td>
                                                 
                                                 <td>' . $row['homework_status'] . '</td>
                                                 <td>' . $row['homework_inspection_result'] . '</td>
-                                                <td>' . $row['homework_submission_datetime'] . '</td>
+                                                <td>' . date("d M Y h:i:s a", strtotime($row['homework_submission_datetime'])) . '</td>
                                                 <td>
                                                 <a href="/check_submitted_homework?homework_id=' . $row['homework_id'] . '&homework_problem_id='. $row['homework_problem_id'] .'&suid='. $row['submitted_user_id'] .'">
                                                 <button class = "btn btn-sm btn-outline-dark">Check Homework</button>

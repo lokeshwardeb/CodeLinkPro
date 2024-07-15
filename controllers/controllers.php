@@ -33,7 +33,6 @@ class controllers extends models
 
     public function update_problem_names()
     {
-
     }
 
     public function homework_submit_show_input($get_input_1, $get_input_2)
@@ -48,14 +47,11 @@ class controllers extends models
             } else {
                 // that means there are no running homeworks in homework_problems table
                 echo $get_input_2;
-
             }
         } else {
             // that means there are no running homeworks homeworks table 
             echo $get_input_2;
         }
-
-
     }
 
     public function connect_pagination()
@@ -83,10 +79,53 @@ class controllers extends models
 
         // Determine the starting limit number
         $starting_limit = ($page - 1) * $results_per_page;
-
     }
 
-    public function pagination($table_name = "homeworks", $where_conditions_and_values='1')
+    public function join_pagination($table_name = "homeworks", $where_conditions_and_values = '1')
+    {
+
+        // Define how many results per page
+        $results_per_page = 5;
+
+        // Find out the number of results stored in database
+        $sql = "SELECT COUNT(*) AS total FROM $table_name WHERE $where_conditions_and_values";
+        $result = $this->make_query($sql);
+
+        // $result = $models->make_query($sql);
+
+        $row = $result->fetch_assoc();
+        $total_results = $row['total'];
+
+        // Determine the total number of pages available
+        $total_pages = ceil($total_results / $results_per_page);
+
+        // Determine which page number visitor is currently on
+        if (!isset($_GET['page'])) {
+            $page = 1;
+        } else {
+            $page = $_GET['page'];
+        }
+
+        // Determine the starting limit number
+        $starting_limit = ($page - 1) * $results_per_page;
+
+        // // Retrieve selected results from database
+        // $sql = "SELECT * FROM homeworks LIMIT $starting_limit, $results_per_page";
+        // $result = $models->make_query($sql);
+
+        for ($page = 1; $page <= $total_pages; $page++) {
+            echo '
+    <li class="page-item"><a class="page-link" href="?page=' . $page . '">' . $page . '</a></li>
+    ';
+            // echo '
+            // <a href="?page='. $page .'"> '. $page .' </a>
+            // ';
+        }
+
+
+        return $total_pages;
+    }
+    public function pagination($table_name = "homeworks", $where_conditions_and_values = '1')
     {
 
         // Define how many results per page
@@ -115,8 +154,8 @@ class controllers extends models
         $starting_limit = ($page - 1) * $results_per_page;
 
         // // Retrieve selected results from database
-// $sql = "SELECT * FROM homeworks LIMIT $starting_limit, $results_per_page";
-// $result = $models->make_query($sql);
+        // $sql = "SELECT * FROM homeworks LIMIT $starting_limit, $results_per_page";
+        // $result = $models->make_query($sql);
 
         for ($page = 1; $page <= $total_pages; $page++) {
             echo '
@@ -129,7 +168,6 @@ class controllers extends models
 
 
         return $total_pages;
-
     }
 
 
@@ -267,77 +305,77 @@ class controllers extends models
 
 
     //     // test_run
-//     public function run_code()
-// {
-//     // Check if the form was submitted
-//     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['test_code'])) {
-//         // Get the code and language from the form
-//         $code = $_POST['editor_code'];
-//         $language = (string) $_POST['language'];
-//         $input_data = isset($_POST['input_data']) ? $_POST['input_data'] : '';
+    //     public function run_code()
+    // {
+    //     // Check if the form was submitted
+    //     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['test_code'])) {
+    //         // Get the code and language from the form
+    //         $code = $_POST['editor_code'];
+    //         $language = (string) $_POST['language'];
+    //         $input_data = isset($_POST['input_data']) ? $_POST['input_data'] : '';
 
     //         // Jdoodle API credentials and endpoint
-//         $clientId = 'bb3163d64db80aa87f149b51a3a7ec2a';
-//         $clientSecret = '99043e289eabc79837025889a1298b61cf60324a1a0846382e5551586ec918ef';
-//         $url = 'https://api.jdoodle.com/v1/execute';
+    //         $clientId = 'bb3163d64db80aa87f149b51a3a7ec2a';
+    //         $clientSecret = '99043e289eabc79837025889a1298b61cf60324a1a0846382e5551586ec918ef';
+    //         $url = 'https://api.jdoodle.com/v1/execute';
 
     //         // Determine the version index based on the selected language
-//         $versionIndex = '0'; // Default version index
-//         switch ($language) {
-//             case "python3":
-//                 $versionIndex = "3";
-//                 break;
-//             case "c":
-//             case "cpp":
-//                 $versionIndex = "5";
-//                 break;
-//             case "java":
-//                 $versionIndex = "3";
-//                 break;
-//             case "php":
-//                 $versionIndex = "4";
-//                 break;
-//         }
+    //         $versionIndex = '0'; // Default version index
+    //         switch ($language) {
+    //             case "python3":
+    //                 $versionIndex = "3";
+    //                 break;
+    //             case "c":
+    //             case "cpp":
+    //                 $versionIndex = "5";
+    //                 break;
+    //             case "java":
+    //                 $versionIndex = "3";
+    //                 break;
+    //             case "php":
+    //                 $versionIndex = "4";
+    //                 break;
+    //         }
 
     //         // Prepare the data to send to Jdoodle API
-//         $data = [
-//             "clientId" => $clientId,
-//             "clientSecret" => $clientSecret,
-//             "script" => $code,
-//             "language" => $language,
-//             "versionIndex" => $versionIndex,
-//             "stdin" => $input_data, // Placeholder for input, can be filled below
-//         ];
+    //         $data = [
+    //             "clientId" => $clientId,
+    //             "clientSecret" => $clientSecret,
+    //             "script" => $code,
+    //             "language" => $language,
+    //             "versionIndex" => $versionIndex,
+    //             "stdin" => $input_data, // Placeholder for input, can be filled below
+    //         ];
 
     //         // // Check if input is provided in the form submission
-//         // if (isset($_POST['input_data']) && $_POST['input_data'] != '') {
-//         //   echo  $inputData = $_POST['input_data'];
-//         //     $data['stdin'] = $inputData;
-//         // }
+    //         // if (isset($_POST['input_data']) && $_POST['input_data'] != '') {
+    //         //   echo  $inputData = $_POST['input_data'];
+    //         //     $data['stdin'] = $inputData;
+    //         // }
 
     //         // Set up the request options
-//         $options = [
-//             'http' => [
-//                 'header' => "Content-Type: application/json\r\n",
-//                 'method' => 'POST',
-//                 'content' => json_encode($data),
-//             ],
-//         ];
+    //         $options = [
+    //             'http' => [
+    //                 'header' => "Content-Type: application/json\r\n",
+    //                 'method' => 'POST',
+    //                 'content' => json_encode($data),
+    //             ],
+    //         ];
 
     //         // Create a stream context for the API request
-//         $context = stream_context_create($options);
-//         // Make the API request
-//         $result = file_get_contents($url, false, $context);
+    //         $context = stream_context_create($options);
+    //         // Make the API request
+    //         $result = file_get_contents($url, false, $context);
 
     //         // Handle errors if the API request fails
-//         if ($result === FALSE) {
-//             die('Error: Unable to fetch data from Jdoodle API');
-//         }
+    //         if ($result === FALSE) {
+    //             die('Error: Unable to fetch data from Jdoodle API');
+    //         }
 
     //         // Return the API response as JSON
-//         return $result;
-//     }
-// }
+    //         return $result;
+    //     }
+    // }
 
 
 
@@ -581,9 +619,7 @@ class controllers extends models
                  ';
                         // return;
                     }
-
                 }
-
             }
 
 
@@ -646,23 +682,24 @@ class controllers extends models
         }
     }
 
-    public function change_a_user_role(){
-        if(isset($_POST['change_user_role_btn'])){
+    public function change_a_user_role()
+    {
+        if (isset($_POST['change_user_role_btn'])) {
             $user_id = $this->pure_data($_POST['user_id']);
             $change_user_role = $this->pure_data($_POST['change_user_role']);
 
             $result_change_user_role = $this->get_data_where("users", "`user_id` = '$user_id'");
-            if($result_change_user_role){
-                if($result_change_user_role->num_rows > 0){
+            if ($result_change_user_role) {
+                if ($result_change_user_role->num_rows > 0) {
                     $result_update_change_user_name = $this->update_where("users", "`user_role` = '$change_user_role'", "`user_id` = '$user_id'");
-                    
-                    if($result_update_change_user_name){
+
+                    if ($result_update_change_user_name) {
                         echo '
                         <script>
                         success_alert("Success !!", "User role has been changed successfully !!");
                         </script>
                         ';
-                    }else{
+                    } else {
                         echo '
                         <script>
                         danger_alert("Danger !!", "User role cannot been changed successfully !!");
@@ -671,24 +708,21 @@ class controllers extends models
                     }
                 }
             }
-
         }
-        
-
-
     }
 
-    public function check_admin_access(){
+    public function check_admin_access()
+    {
         $user_role = $_SESSION['user_role'];
 
-        if($user_role != 'admin'){
+        if ($user_role != 'admin') {
             echo '
             <script>
             location.href = "/dashboard";
             </script>
             ';
         }
-        
+
         // $result_check_user_admin_access = $this->get_data_where("users", "`user_id` = '$user_id'");
 
         // if($result_check_user_admin_access){
@@ -699,47 +733,46 @@ class controllers extends models
         //         }
         //     }
         // }
-        
+
     }
 
-    public function check_block_user(){
+    public function check_block_user()
+    {
         $user_id = $_SESSION['user_id'];
 
         $result_check_user_block_status = $this->get_data_where("users", "`user_id` = '$user_id'");
 
-        if($result_check_user_block_status){
-            if($result_check_user_block_status->num_rows){
-                while($row = $result_check_user_block_status->fetch_assoc()){
+        if ($result_check_user_block_status) {
+            if ($result_check_user_block_status->num_rows) {
+                while ($row = $result_check_user_block_status->fetch_assoc()) {
                     $user_block_status = $row['user_block_status'];
-                   
                 }
-              
             }
         }
 
-        if($user_block_status == 'user_blocked'){
+        if ($user_block_status == 'user_blocked') {
             echo '
             <script>
             location.href = "/user_blocked"
             </script>
             ';
         }
-        
     }
 
-    public function block_and_unblock_user(){
-        if(isset($_POST['block_user'])){
+    public function block_and_unblock_user()
+    {
+        if (isset($_POST['block_user'])) {
             $user_id = $this->pure_data($_POST['user_id']);
 
             $result_block_user = $this->update_where("users", "`user_block_status` = 'user_blocked'", "`user_id` = '$user_id'");
 
-            if($result_block_user){
+            if ($result_block_user) {
                 echo '
                 <script>
                 success_alert("Success !!", "The user has been blocked successfully !!");
                 </script>
                 ';
-            }else{
+            } else {
                 echo '
                 <script>
                 danger_alert("Error !!", "The user has not been blocked successfully !!");
@@ -748,18 +781,18 @@ class controllers extends models
             }
         }
 
-        if(isset($_POST['unblock_user'])){
+        if (isset($_POST['unblock_user'])) {
             $user_id = $this->pure_data($_POST['user_id']);
 
             $result_block_user = $this->update_where("users", "`user_block_status` = ''", "`user_id` = '$user_id'");
 
-            if($result_block_user){
+            if ($result_block_user) {
                 echo '
                 <script>
                 success_alert("Success !!", "The user has been unblocked successfully !!");
                 </script>
                 ';
-            }else{
+            } else {
                 echo '
                 <script>
                 danger_alert("Error !!", "The user has not been unblocked successfully !!");
@@ -781,9 +814,9 @@ class controllers extends models
             $wrong_solution_reason = $this->pure_data($_POST['wrong_solution_reason']);
             $submitted_user_id = $this->pure_data($_POST['submitted_user_id']);
 
-        //   die();
+            //   die();
             // $submitted_user_id = $_SESSION['user_id'];
-            
+
             //  check if the data is already exists on the database
 
             // $result_check_homework_submission = $this->get_data_where("homework_submission", "`homework_id` = '$homework_id' AND `homework_problem_id` = '$homework_problem_id' AND `submitted_user_id` = '$submitted_user_id'");
@@ -802,9 +835,9 @@ class controllers extends models
 
             $result_update_check_homework = $this->update_where("homework_submission", "`check_submitted_homework_status` = 'checked', `homework_inspection_result` = '$homework_inspection_result', `wrong_solution_reason` = '$wrong_solution_reason'", "`homework_id` = '$homework_id' AND `homework_problem_id` = '$homework_problem_id' AND `submitted_user_id` = '$submitted_user_id'");
 
-            if($result_update_check_homework){
+            if ($result_update_check_homework) {
                 echo '<script>success_alert("Success !!", "The submitted homework checkings has been updated successfully !!");</script>';
-            }else{
+            } else {
                 echo '<script>danger_alert("Error !!", "The submitted homework checkings cannot been updated successfully !! !! Please contact the developer as soon as possible !!");</script>';
             }
 
@@ -823,7 +856,7 @@ class controllers extends models
             // $row = $result_check_result_get_submission_id->fetch_assoc();
             // $result_get_submission_id = $row['AUTO_INCREMENT'];
 
-            
+
 
             // Validate language selection
             if (empty($language)) {
@@ -1033,7 +1066,6 @@ class controllers extends models
                     ';
 
                     return;
-
                 }
 
                 // die();
@@ -1138,7 +1170,6 @@ class controllers extends models
             if ($result_check_problem_count) {
                 $row = $result_check_problem_count->fetch_assoc();
                 $problems_count = $row['problems_count'];
-
             } else {
                 echo '<script>danger_alert("Error !!", "Invalid homework ID.");</script>';
                 return;
@@ -1301,7 +1332,6 @@ class controllers extends models
                     for ($i = 1; $i <= $problems_count; $i++) {
                         $problem_name = 'hw_' . $homework_check_id . '_problem_' . $i;
                         $result_add_problem = $this->insert("homework_problems", "`homework_id`, `homework_problem_name`, `homework_problem_status`", "'$homework_check_id', '$problem_name', 'running'");
-
                     }
 
 
@@ -1327,9 +1357,6 @@ class controllers extends models
                     }
                 }
             }
-
-
-
         }
     }
 
@@ -1348,19 +1375,34 @@ class controllers extends models
             
             
             ';
-
         }
     }
 
     public function login()
     {
         if (isset($_POST['login'])) {
-            $username_or_email = $this->pure_data($_POST['username_or_email']);
-            ;
-            $password = $this->pure_data($_POST['password']);
-            ;
+            $username_or_email = $this->pure_data($_POST['username_or_email']);;
+            $password = $this->pure_data($_POST['password']);;
 
             $result_check = $this->get_data_where("users", "`user_name` = '$username_or_email' or `email` = '$username_or_email'");
+
+            if ($username_or_email == '' || $password == '') {
+                echo '
+                <script>
+                danger_alert("Please fill all these data !!", "You have to fill up all the data");
+                </script>
+                ';
+                return;
+            }
+
+            if ($username_or_email == '' && $password = '' & $cpassword = '') {
+                echo '
+                <script>
+                danger_alert("Please fill all these data !!", "You have to fill up all the data");
+                </script>
+                ';
+                return;
+            }
 
             if ($result_check) {
                 if ($result_check->num_rows > 0) {
@@ -1380,9 +1422,7 @@ class controllers extends models
                             $_SESSION['loggedin'] = true;
 
                             header("location: /dashboard");
-
-
-                        }else{
+                        } else {
                             echo '
                             <script>
                             danger_alert("Password is not correct !!", "Please provide correct credentials to login");
@@ -1390,7 +1430,7 @@ class controllers extends models
                             ';
                         }
                     }
-                }else{
+                } else {
                     echo '
                     <script>
                     danger_alert("User not found !! ", "The user with your submitted credentials was not found !! Please create a account to login !!");
@@ -1398,8 +1438,6 @@ class controllers extends models
                     ';
                 }
             }
-
-
         }
     }
     public function signup()
@@ -1409,6 +1447,27 @@ class controllers extends models
             $email = $this->pure_data($_POST['email']);
             $password = $this->pure_data($_POST['password']);
             $cpassword = $this->pure_data($_POST['cpassword']);
+
+            // check if the data are not blank 
+
+            if ($username == '' || $email == '' || $password == '' || $cpassword == '') {
+                echo '
+                <script>
+                danger_alert("Please fill up all the data !!", "You have to fill up all the data for signup !!");
+                </script>
+                ';
+                return;
+            }
+
+            // chech if the pasword is not matched with cpassword
+            if ($password != $cpassword) {
+                echo '
+                <script>
+                danger_alert("Password doesnot match !!", "Please give the correct credentials for signup !!")
+                </script>
+                ';
+                return;
+            }
 
 
 
@@ -1430,8 +1489,8 @@ class controllers extends models
                     } else {
                         // that means the user is not exist and it should continue the signup process
 
-                        
-                        if($password == ''){
+
+                        if ($password == '') {
                             // that means the password is blank and it should not continue the process and it should through an error msg
                             echo '
                             <script>
@@ -1441,7 +1500,7 @@ class controllers extends models
                             return;
                         }
 
-                    
+
 
 
                         // password hashing algorithm
@@ -1466,10 +1525,8 @@ class controllers extends models
                             
                             ';
                         }
-
                     }
                 }
-
             } else {
                 echo '
                 
@@ -1525,8 +1582,6 @@ class controllers extends models
 
                 
                 ';
-
-
             } else {
                 // that means the gender section is selected
 
@@ -1554,7 +1609,6 @@ class controllers extends models
 
                 
                 ';
-
             } else {
                 // that means the interest section is selected
 
@@ -1583,9 +1637,6 @@ class controllers extends models
 
                 
                 ';
-
-
-
             } else {
 
                 // that means the weapon section is selected
@@ -1626,7 +1677,6 @@ class controllers extends models
         
                         
                         ';
-
                     } else {
                         // that means the member is not exists on the db
 
@@ -1642,7 +1692,6 @@ class controllers extends models
                             success_alert("Welcome to the world of programming !",  "Welcome you to the UoB computers club !");
                             </script>
                             ';
-
                         } else {
                             echo $this->alert("danger", "Something went wrong ! Cannot registered succesfully ! We are handling with the issue ! Please try again later");
 
@@ -1653,17 +1702,9 @@ class controllers extends models
                             </script>
                             
                             ';
-
                         }
-
-
                     }
                 }
-
-
-
-
-
             } else {
                 echo $this->alert("danger", "You have not registed on the computers club successfully ! Please select and fillup all the informations correctly to register !");
 
@@ -1677,8 +1718,6 @@ class controllers extends models
 
                 ';
             }
-
-
         }
     }
 }

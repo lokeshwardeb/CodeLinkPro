@@ -94,6 +94,7 @@ if($result_check_submission){
                                                     $submitted_user_name = $row['user_name'];
                                                     $submitted_user_role = $row['user_role'];
                                                     $homework_inspection_result = $row['homework_inspection_result'];
+                                                    $wrong_solution_reason = $row['wrong_solution_reason'];
                                                 }
                                             }else{
                                                 $submitted_user_name = '';
@@ -203,12 +204,24 @@ if($result_check_submission){
                                            ?>>Homework problem solution is correct</option>
                                            <option value="wrong_solution" <?php 
 
-                                           if($homework_inspection_result == 'wrong_solution' || $homework_inspection_result == ''){
+                                           if($homework_inspection_result == 'wrong_solution'){
                                             echo 'selected';
                                            }
+
+                                           
                                                                                       
                                            
                                            ?>>Homework problem solution is wrong</option>
+                                           <?php
+
+                                            if($homework_inspection_result == ''){
+                                                echo '
+                                                <option value = "" selected>The homework is not checked yet</option>
+                                                
+                                                ';
+                                            }
+
+                                           ?>
                                         </select>
                                     </div>
 
@@ -223,7 +236,13 @@ if($result_check_submission){
                                     
                                     ?> " >
                                         <label for="wrong_solution_reason">Questions from the inspector ? Is there was anything wrong or error ? Where was the wrong ? Here is the questions and explaination the wrong solution reason such as : Where was your wrong or what steps can make the code more than better</label>
-                                        <textarea name="wrong_solution_reason" disabled class="form-control mt-4" id="wrong_solution_reason" cols="30" rows="10"></textarea>
+                                        <textarea name="wrong_solution_reason" disabled class="form-control mt-4 text-danger fw-bold" id="wrong_solution_reason" cols="30" rows="10"> <?php 
+
+                                        echo $wrong_solution_reason;
+
+                                        ?>
+
+                                        </textarea>
                                     </div>
 <!-- 
                                     <div class="mb-3 me-4 mt-4 pt-4 pe-4">
