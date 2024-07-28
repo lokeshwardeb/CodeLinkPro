@@ -162,7 +162,7 @@ if($result_check_submission){
                               <div class="integrate_code_editor">
                                 <?php
 
-                                $user_id = $_SESSION['$user_id'];
+                                $user_id = $_SESSION['user_id'];
 
                                 $result_check_submission = $controllers->get_data_where("homework_submission", "`homework_id` = '$homework_id' AND `homework_problem_id` = '$homework_problem_id' AND `submitted_user_id` = '$user_id'");
 

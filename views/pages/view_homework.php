@@ -4,6 +4,7 @@ $homeworks_active_class = "sidebar_active_btn";
 $active_name = "Submit Homework";
 require __DIR__ . "/inc/_header.php";
 $controllers->submit_homework();
+$controllers->check_homework_show_status();
 ?>
 
 <main>
@@ -50,8 +51,14 @@ $controllers->submit_homework();
 
 
 
-                                    $result_check_homework_status = $controllers->get_data_where("homeworks", "`homework_status` = 'running' AND `homework_id` = '$homework_id'");
-                                    $result_problem_homework_status = $controllers->get_data_where("homework_problems", "`homework_problem_status` = 'running' AND `homework_id` = '$homework_id'");
+                                    // $result_check_homework_status = $controllers->get_data_where("homeworks", "`homework_status` = 'running' AND `homework_id` = '$homework_id'");
+                                    // $result_problem_homework_status = $controllers->get_data_where("homework_problems", "`homework_problem_status` = 'running' AND `homework_id` = '$homework_id'");
+
+                                    
+                                    $result_check_homework_status = $controllers->get_data_where("homeworks", "`homework_id` = '$homework_id'");
+                                    $result_problem_homework_status = $controllers->get_data_where("homework_problems", "`homework_id` = '$homework_id'");
+
+
                                     if ($result_check_homework_status) {
                                         if ($result_check_homework_status->num_rows <= 0) {
                                             if ($result_problem_homework_status) {
@@ -66,7 +73,9 @@ $controllers->submit_homework();
 
                                                     echo '
                                                     
+                                                    <script>
                                                     location.href="/homework";
+                                                    </script>
                                                     
                                                     ';
 
@@ -83,12 +92,21 @@ $controllers->submit_homework();
                                                 $homework_status = $row['homework_status'];
                                                 $homework_file_name = $row['homework_file_name'];
                                                 $user_name = $row['user_name'];
-                                                $homework_submission_datetime = $row['homework_submission_datetime'];
+                                                $homework_showing_status = $row['homework_showing_status'];
+
+                                                $homework_submission_datetime = date("d M Y h:i:s a", strtotime($row['homework_submission_datetime']));
+                                                // $homework_submission_datetime = $row['homework_submission_datetime'];
                                             }
                                         }
                                     }
 
-                                    $get_main_datetime = strtotime($homework_submission_datetime);
+                                    $get_main_datetime = $homework_submission_datetime;
+
+                                    // strtotime()
+
+                                    // $get_main_datetime =  date("d M Y h:i:s a", strtotime($homework_submission_datetime));
+
+                                    // date("d M Y h:i:s a", strtotime($homework_submission_datetime)) 
 
                                     $homework_publisher_username_replaced = str_replace("_", " ", $user_name);
 
@@ -100,8 +118,47 @@ $controllers->submit_homework();
                                         <div class="homework_title m-2">Homework Title : <span><?php echo $homework_title ?></span></div>
                                         <div class="problems_count m-2">Total Problems : <span><?php echo $problems_count ?></span></div>
                                         <div class="homework_status m-2">Homework Status : <span><?php echo $homework_status ?></span></div>
-                                        <div class="homework_status m-2">Homework Published By : <span><?php echo $homework_publisher_username_replaced ?></span></div>
-                                        <div class="homework_submission_datetime m-2">Homework Submission Datetime : <span><?php echo date("d M Y H:i:s a", $get_main_datetime) ?></span></div>
+                                        <div class="homework_status m-2">Homework Published By : <span><?php echo ucwords($homework_publisher_username_replaced) ?></span></div>
+
+                                        <?php
+
+                                        if($_SESSION['user_role'] == 'admin'){
+
+                                            if($homework_showing_status == ''){
+                                                echo '
+
+                                            <div class="homework_status m-2">Homework Showing Status By : <span>Homework is showind to</span></div>
+                                            
+                                            ';
+
+                                            
+
+                                            }elseif($homework_showing_status == 'hide_homework'){
+                                                echo '
+
+                                                <div class="homework_status m-2">Homework Showing Status : <span class="text-danger">Homework is hidden to users</span></div>
+                                                
+                                                '; 
+                                            }elseif($homework_showing_status == 'show_homework'){
+                                                echo '
+
+                                                <div class="homework_status m-2">Homework Showing Status : <span class="text-primary">Homework is showing to users</span></div>
+                                                
+                                                '; 
+                                            }
+
+                                            // echo '
+
+                                           
+
+                                            // <div class="homework_status m-2">Homework Showing Status By : <span>'. $homework_showing_status == 'hide_homework' ? 'Homework is hidden' : 'Homework is showing to users' .'</span></div>
+                                            // ';
+                                        }
+
+                                        ?>
+
+
+                                        <div class="homework_submission_datetime m-2">Homework Submission Datetime : <span><?php echo $get_main_datetime ?></span></div>
                                     </div>
 
 
@@ -120,11 +177,33 @@ $controllers->submit_homework();
                                     ?>
 
                                     <div class="container me-4 mb-5">
-                                    
-                                    <embed class="m-4 " src="/assets/uploads/homeworks/<?php echo $user_name . '/' . $homework_file_name ?>" type="application/pdf" style="height: 100vh; width:92%" >
 
-                                 <div class="mt-4 mb-5 pb-5">
-                                 <a href="/assets/uploads/homeworks/<?php echo $user_name . '/' . $homework_file_name ?>" download="" ><button class="btn btn-outline-primary">Download Homework</button></a>
+                                    <?php
+
+                                    if($homework_file_name != ''){
+                                        echo '
+                                        <embed class="m-4 " src="/assets/uploads/homeworks/'. $user_name .'/' . $homework_file_name .'" type="application/pdf" style="height: 100vh; width:92%" >
+                                        ';
+                                    }else{
+                                        // that means the file name is blank and it does not exists any file for the homework
+                                        echo '<div class="fs-4 text-secondary mt-4 pt-4 text-center">No file was found for this homework</div>';
+                                    }
+
+                                    ?>
+                                    
+
+                                 <div class="download_section">
+                                    <?php
+
+                                    if($homework_file_name != ''){
+                                        echo '
+                                        <div class="mt-4 mb-5 pb-5">
+                                 <a href="/assets/uploads/homeworks/'. $user_name . '/' . $homework_file_name .'" download="" ><button class="btn btn-outline-primary">Download Homework</button></a>
+                                 </div>
+                                        ';
+                                    }
+
+                                    ?>
                                  </div>
 
 

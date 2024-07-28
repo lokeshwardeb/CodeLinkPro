@@ -69,6 +69,11 @@ $controllers->check_block_user();
                                     <button style="font-size: 13px" class="btn dash_navi_btn manage_admin_panel_btn">New Running Homeworks</button>
                                 </a>
                             </div>
+                            <div class="col-md-6">
+                                <a href="/all_homeworks">
+                                    <button style="font-size: 13px" class="btn dash_navi_btn manage_admin_panel_btn">View All Homeworks</button>
+                                </a>
+                            </div>
                             <!-- <div class="col-md-6">
                                 <a href="">
                                     <button class="btn dash_navi_btn">Written tutorials</button>

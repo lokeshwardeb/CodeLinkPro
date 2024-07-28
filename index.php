@@ -28,6 +28,7 @@ $Routes = [
     "/manage_users" => __DIR__ . "/views/pages/manage_users.php",
     "/user_details" => __DIR__ . "/views/pages/user_details.php",
     "/user_blocked" => __DIR__ . "/views/pages/user_blocked.php",
+    "/all_homeworks" => __DIR__ . "/views/pages/all_homeworks.php",
     "/manage_admin_panel" => __DIR__ . "/views/pages/manage_admin_panel.php",
     "/add_new_homework" => __DIR__ . "/views/pages/add_new_homework.php",
     "/manage_homework" => __DIR__ . "/views/pages/manage_homework.php",

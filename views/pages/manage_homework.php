@@ -195,6 +195,7 @@ for ($page = 1; $page <= $total_pages; $page++) {
                                                 <th scope="col">#</th>
                                                 <th scope="col">Homework Title</th>
                                                 <th scope="col">Homework Status</th>
+                                                <th scope="col">Homework Showing Status</th>
                                                 <th scope="col">Submission Datetime</th>
                                                 <th scope="col">Action</th>
                                             </tr>
@@ -207,7 +208,7 @@ for ($page = 1; $page <= $total_pages; $page++) {
 // $sql = "SELECT * FROM homeworks LIMIT $starting_limit, $results_per_page";
 // $result = $models->make_query($sql);
                                             // Retrieve selected results from database
-                                            $sql = "SELECT * FROM homeworks LIMIT $starting_limit, $results_per_page";
+                                            $sql = "SELECT * FROM homeworks ORDER BY `homeworks`.`homework_id` DESC LIMIT $starting_limit, $results_per_page";
                                             $result_manage_homework = $models->make_query($sql);
 
                                             // $result_manage_homework = $controllers->get_data("homeworks");
@@ -216,11 +217,25 @@ for ($page = 1; $page <= $total_pages; $page++) {
                                                 if ($result_manage_homework->num_rows > 0) {
                                                     $manage_homework_sl_no = 1;
                                                     while ($row = $result_manage_homework->fetch_assoc()) {
+
+                                                      
+
                                                         echo '
                                                 <tr>
                                                 <th scope="row">' . $manage_homework_sl_no . '</th>
                                                 <td>' . $row['homework_title'] . '</td>
-                                                <td>' . $row['homework_status'] . '</td>
+                                                <td>' . $row['homework_status'] . '</td>';
+
+                                                $get_homework_showing_status = $row['homework_showing_status'];
+
+                                                if($get_homework_showing_status == '' || $get_homework_showing_status == 'show_homework'){
+                                                    echo '<td>Show Homework</td>';
+                                                }elseif($get_homework_showing_status == 'hide_homework'){
+                                                    echo '<td>Hide Homework</td>';
+                                                }
+
+                                                echo '
+                                               
                                                 <td>' . $row['homework_submission_datetime'] . '</td>
                                                 <td>
                                                 <a href="/homework_details?homework_id=' . $row['homework_id'] . '">

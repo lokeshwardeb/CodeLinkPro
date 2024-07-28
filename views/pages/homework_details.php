@@ -125,6 +125,7 @@ $controllers->check_admin_access();
                                     $homework_submission_datetime = $row['homework_submission_datetime'];
                                     $problems_count = $row['problems_count'];
                                     $homework_status = $row['homework_status'];
+                                    $homework_showing_status = $row['homework_showing_status'];
 
                                     echo '
                                     <div class="mb-3 me-4 pe-4">
@@ -197,8 +198,26 @@ $controllers->check_admin_access();
                                 ?> >Homework submitting time is expired</option>
                             </select>
                         </div>
-
                         <div class="mb-3 me-4 pe-4">
+
+                            <label for="homework_showing_status"class="mt-4 mb-2" >Homework showing status</label>
+
+                            <select name="homework_showing_status" id="homework_showing_status" class="form-control mb-5">
+                                <option value="">Select the Homework Showing Status</option>
+                                <option value="show_homework" <?php 
+                                if($homework_showing_status == 'show_homework'){
+                                    echo "selected";
+                                }
+                                ?> >Show the homework to the users</option>
+                                <option value="hide_homework" <?php 
+                                if($homework_showing_status == 'hide_homework'){
+                                    echo "selected";
+                                }
+                                ?> >Hide the homework to the users</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3 me-4 pe-4 mt-4">
                             <label for="homework_submission_datetime">Homework Submission Datetime</label>
                             <input type="datetime-local" class="form-control mt-4 " name="homework_submission_datetime" value="<?php echo date('Y-m-d\TH:i', strtotime($homework_submission_datetime)) ?>" id="homework_submission_datetime"  >
                         </div>

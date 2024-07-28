@@ -31,6 +31,36 @@ class controllers extends models
         }
     }
 
+    public function check_homework_show_status(){
+        if(isset($_GET['homework_id'])){
+            if($_SESSION['user_role'] == 'team_member'){
+                // that means the user is a team member
+                $get_homework_id = $_GET['homework_id'];
+                $check_homework_show_status = $this->get_data_where("homeworks", "`homework_id` = '$get_homework_id'");
+
+                if($check_homework_show_status){
+                    if($check_homework_show_status->num_rows > 0){
+                        // that means the homework exists on database
+                        while($row = $check_homework_show_status->fetch_assoc()){
+                            $homework_showing_status = $row['homework_showing_status'];
+
+                            if($homework_showing_status == 'hide_homework'){
+                                echo '
+                                <script>
+                                location.href = "/homework"
+                                </script>
+                                ';
+                            }
+
+                        }
+                    }
+                }
+
+            }
+        }
+        
+    }
+
     public function update_problem_names()
     {
 
@@ -1013,6 +1043,7 @@ class controllers extends models
             $homework_id = $this->pure_data($_POST['homework_id']);
             $homework_title = $this->pure_data($_POST['homework_title']);
             $homework_status = $this->pure_data($_POST['homework_status']);
+            $homework_showing_status = $this->pure_data($_POST['homework_showing_status']);
             $homework_files = $_FILES['homework_files']['name'];
             $homework_files_tmp_name = $_FILES['homework_files']['tmp_name'];
             $homework_submission_datetime = $this->pure_data($_POST['homework_submission_datetime']);
@@ -1165,7 +1196,7 @@ class controllers extends models
             }
 
             // Update homework details
-            $result_update_homework_details = $this->update_where("homeworks", "`homework_title` = '$homework_title', `homework_status` = '$homework_status', `homework_submission_datetime` = '$homework_submission_datetime'", "`homework_id` = '$homework_id'");
+            $result_update_homework_details = $this->update_where("homeworks", "`homework_title` = '$homework_title', `homework_status` = '$homework_status', `homework_showing_status` = '$homework_showing_status', `homework_submission_datetime` = '$homework_submission_datetime'", "`homework_id` = '$homework_id'");
 
             if ($result_update_homework_details) {
                 echo '<script>success_alert("Success !!", "The homework has been updated successfully !!");</script>';
@@ -1267,6 +1298,8 @@ class controllers extends models
             $problems_count = $this->pure_data($_POST['problems_count']);
             $homework_submission_datetime = $this->pure_data($_POST['homework_submission_datetime']);
 
+            $publisher_user_name = $_SESSION['username'];
+
             $homework_status = "running";
 
             $check_homework = $this->get_data_where("homeworks", "`homework_title` = '$homework_title' and `problems_count` = '$problems_count'");
@@ -1282,7 +1315,10 @@ class controllers extends models
                     ';
                 } else {
                     // that means the same data is not exist
-                    $result_add_new_homework = $this->insert("homeworks", "`homework_title`, `problems_count`, `homework_status`, `homework_submission_datetime`", "'$homework_title', '$problems_count', '$homework_status', '$homework_submission_datetime'");
+
+                    // adding the new homework on homeworks table
+                    // the showing the homework as default
+                    $result_add_new_homework = $this->insert("homeworks", "`homework_title`, `problems_count`, `homework_status`, `homework_showing_status`, `homework_submission_datetime`, `user_name`", "'$homework_title', '$problems_count', '$homework_status', 'show_homework', '$homework_submission_datetime', '$publisher_user_name'");
 
                     $get_homework_id = $this->get_data_where("homeworks", "`homework_title` = '$homework_title'");
 

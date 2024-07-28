@@ -20,7 +20,7 @@ $results_per_page = 5;
 
 // Find out the number of results stored in database
 // $sql = "SELECT COUNT(*) AS total FROM homeworks";
-$sql = "SELECT COUNT(*) AS total FROM homeworks WHERE `homework_status` = 'running'";
+$sql = "SELECT COUNT(*) AS total FROM homeworks WHERE `homework_showing_status` = 'show_homework' or `homework_showing_status` = ''";
 $result = $models->make_query($sql);
 
 $row = $result->fetch_assoc();
@@ -120,16 +120,16 @@ for ($page = 1; $page <= $total_pages; $page++) {
                             </div>
                         </div> -->
 
+
                         <div class="manage_codes_section_title mb-5">
                                     <div class="manage_code_title fs-4 text-center">
-                                        New Homeworks 
+                                        Manage All Homeworks 
                                         
                                     </div>
                                     <div class="manage_code_sub_title fs-6 text-center">
-                                    (Here you can manage all the new running homeworks)
+                                    (Here you can manage all the homeworks)
                                     </div>
                                 </div>
-
 
                         <div class="home_work_section">
                             <div class="container">
@@ -163,6 +163,12 @@ for ($page = 1; $page <= $total_pages; $page++) {
 
                                             // $get_total_pages = $controllers->pagination();
 
+                                            // for ($page = 1; $page <= $total_pages; $page++) {
+                                            //     // echo '
+                                            //     // <a href="?page=' . $page . '"> ' . $page . ' </a>
+                                            //     // ';
+                                            // }
+
                                             $get_total_pages = $total_pages;
 
                                             for ($page = 1; $page <= $total_pages; $page++) {
@@ -194,7 +200,8 @@ for ($page = 1; $page <= $total_pages; $page++) {
                                                         echo '?page=' . $get_page = $get_total_pages;
                                                     }
                                                 }else{
-                                                    echo '?page=' . 2;
+                                                    echo '?page=' . $get_page = $get_total_pages;
+                                                    // echo '?page=' . 2;
                                                 }
 
                                                 
@@ -227,7 +234,13 @@ for ($page = 1; $page <= $total_pages; $page++) {
 // $sql = "SELECT * FROM homeworks LIMIT $starting_limit, $results_per_page";
 // $result = $models->make_query($sql);
                                             // Retrieve selected results from database
-                                            $sql = "SELECT * FROM homeworks WHERE `homework_status` = 'running' LIMIT $starting_limit, $results_per_page";
+                                            // $sql = "SELECT * FROM homeworks  ORDER BY `homeworks`.`homework_id` DESC LIMIT $starting_limit, $results_per_page";
+
+
+                                            // Retrieve selected results from database
+                                            $sql = "SELECT * FROM homeworks WHERE `homework_showing_status` = 'show_homework' or `homework_showing_status` = ''  ORDER BY `homeworks`.`homework_id` DESC LIMIT $starting_limit, $results_per_page";
+
+
                                             $result_manage_homework = $models->make_query($sql);
 
                                             // $result_manage_homework = $controllers->get_data("homeworks");
@@ -254,11 +267,6 @@ for ($page = 1; $page <= $total_pages; $page++) {
                                                         $manage_homework_sl_no++;
 
                                                     }
-                                                }else{
-                                                    // that means there is no new running homeworks available
-                                                    echo '
-                                                    <div class="fs-4">No new running homeworks are available at this moment </div>
-                                                    ';
                                                 }
                                             }
 
